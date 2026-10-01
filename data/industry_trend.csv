@@ -1,0 +1,7 @@
+year,operating_revenue_bn,operating_expenses_bn,operating_margin,full_service_revenue_bn,limited_service_revenue_bn,full_service_margin,limited_service_margin,cogs_share_of_expenses,wages_share_of_expenses,source
+2019,78.4,75.3,0.038,35.9,33.4,0.030,0.039,0.359,0.332,StatCan Daily annual 2020 release (2019 comparison values are approximate)
+2020,58.4,56.7,0.029,24.2,28.9,0.003,0.053,0.348,0.323,StatCan Daily annual 2020 release
+2021,67.5,65.0,0.037,28.2,33.6,0.005,0.069,0.353,0.320,StatCan Daily annual 2021 release
+2022,84.2,80.7,0.043,38.2,37.7,0.043,0.040,,,StatCan Daily/Plus 2022 release (revised later to 84.4)
+2023,95.0,91.6,0.036,43.6,41.7,,,0.357,0.334,StatCan Daily 2023 financial data release
+2024,99.6,95.5,0.041,44.2,44.9,,,0.359,0.336,StatCan Daily annual 2024 release

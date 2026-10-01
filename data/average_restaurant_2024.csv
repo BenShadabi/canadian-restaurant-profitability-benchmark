@@ -1,0 +1,10 @@
+line,dollars,source
+revenue,849200,ISED CIS NAICS 7225 (Statistics Canada data) 2024
+cost_of_sales,380400,ISED CIS NAICS 7225 2024
+labour_and_commissions,200200,ISED CIS NAICS 7225 2024
+rent,71600,ISED CIS NAICS 7225 2024
+utilities_and_telecom,21500,ISED CIS NAICS 7225 2024
+amortization_and_depletion,23200,ISED CIS NAICS 7225 2024
+net_profit,21500,ISED CIS NAICS 7225 2024
+bottom_quartile_profit,-13000,ISED CIS NAICS 7225 2024
+top_quartile_profit,90600,ISED CIS NAICS 7225 2024
