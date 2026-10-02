@@ -169,16 +169,16 @@ CSS = f"""
 body{{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--sans)}}
 .wrap{{max-width:1120px;margin:0 auto;padding:0 var(--sp3)}}
 .skip{{position:absolute;left:-999px}}.skip:focus{{left:var(--sp3);top:var(--sp2);background:#fff;padding:var(--sp2);z-index:9}}
-header{{background:var(--navy);color:#fff;padding:var(--sp4) 0}}
-header h1{{font:600 clamp(1.5rem,4vw,2.1rem)/1.2 var(--serif);margin:0 0 var(--sp2)}}
-header p{{margin:0;color:#DCE6F2;max-width:70ch}}
+header{{background:var(--navy);color:#fff;padding:36px 0 32px;border-bottom:4px solid #E3B965}}
+.kicker{{margin:0 0 12px;font-size:.8125rem;letter-spacing:.08em;text-transform:uppercase;color:#E3B965;font-weight:600}}
+header h1{{font:600 clamp(1.65rem,4.6vw,2.6rem)/1.15 var(--serif);letter-spacing:-.01em;margin:0;max-width:26ch}}
+.by{{margin:14px 0 0;font-size:.9375rem;color:#DCE6F2}}.by strong{{color:#fff}}
+.chips{{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0 0;padding:0;list-style:none}}
+.chips li{{padding:10px 14px;border-radius:6px;min-width:150px;flex:1 1 150px;max-width:260px;background:#1B4570;border:1px solid #3A6290}}
+.chips b{{display:block;font:600 1.375rem/1.1 var(--serif)}}.chips span{{font-size:.8125rem;color:#DCE6F2}}
 h2{{font:600 1.125rem/1.35 var(--serif);margin:0 0 var(--sp2);color:var(--ink)}}
-.kpis{{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp3);margin:var(--sp4) 0}}
-.kpi{{background:var(--card);border:1px solid var(--grid);border-top:3px solid var(--navy);border-radius:6px;padding:var(--sp3)}}
-.kpi .v{{font:600 2rem/1.1 var(--serif);color:var(--navy)}}.kpi .v.sm{{font-size:1.5rem}}
-.kpi .l{{font-weight:600;margin-top:var(--sp1)}}.kpi .s{{color:var(--muted);font-size:.875rem;margin-top:var(--sp1)}}
 .card{{background:var(--card);border:1px solid var(--grid);border-radius:6px;padding:var(--sp3) var(--sp3) var(--sp4)}}
-.hero{{margin-bottom:var(--sp3)}}
+.hero{{margin:var(--sp4) 0 var(--sp3)}}
 .hero .in{{display:grid;grid-template-columns:3fr 2fr;gap:var(--sp4);align-items:center}}
 .grid{{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp3);margin-bottom:var(--sp3)}}
 .sub{{color:var(--muted);font-size:.875rem;margin:0 0 var(--sp2)}}
@@ -198,9 +198,9 @@ summary:focus-visible,a:focus-visible{{outline:3px solid var(--gold);outline-off
 .tw{{overflow-x:auto;margin-bottom:var(--sp3)}}table{{border-collapse:collapse;width:100%;font-size:.875rem;font-variant-numeric:tabular-nums}}
 th,td{{padding:6px 10px;border-bottom:1px solid var(--grid);text-align:right;white-space:nowrap}}th:first-child,td:first-child{{text-align:left}}th{{background:#EEF1F5}}
 footer{{color:var(--muted);font-size:.875rem;padding:var(--sp3) 0 var(--sp5)}}footer a,.notes a{{color:var(--navy)}}
-@media(max-width:900px){{.kpis{{grid-template-columns:repeat(2,1fr)}}.hero .in{{grid-template-columns:1fr}}.grid{{grid-template-columns:1fr}}}}
-@media(max-width:480px){{.kpi .v{{font-size:1.625rem}}.kpi .v.sm{{font-size:1.25rem}}.bars li{{grid-template-columns:1fr 56px}}.bars .bar{{grid-column:1/-1;grid-row:2}}.bars .k{{grid-column:1}}.bars b{{grid-column:2;grid-row:1}}}}
-@media print{{header{{background:#fff;color:#000}}header p{{color:#000}}.card,.kpi{{break-inside:avoid}}}}
+@media(max-width:900px){{.hero .in{{grid-template-columns:1fr}}.grid{{grid-template-columns:1fr}}}}
+@media(max-width:480px){{.bars li{{grid-template-columns:1fr 56px}}.bars .bar{{grid-column:1/-1;grid-row:2}}.bars .k{{grid-column:1}}.bars b{{grid-column:2;grid-row:1}}}}
+@media print{{header{{background:#fff;color:#000}}header p,.by,.kicker,.chips span{{color:#000}}.chips li{{background:#fff;border-color:#000}}.card{{break-inside:avoid}}}}
 """
 
 page = f"""<!doctype html>
@@ -209,15 +209,12 @@ page = f"""<!doctype html>
 <meta name="description" content="The average Canadian restaurant earned a {m0:.1f}% net margin in 2024, and {LOSS_SHARE}% lost money. Public Statistics Canada and ISED data, 2019 to 2024.">
 <style>{CSS}</style></head><body>
 <a class="skip" href="#main">Skip to content</a>
-<header><div class="wrap"><h1>Canadian restaurants keep {m0:.1f} cents of every revenue dollar</h1>
-<p>Canadian Restaurant Profitability Benchmark, 2019 to 2024. Where a typical restaurant makes and loses money, and how much tighter labour, overhead and waste control would change it. By Ben Shadabi.</p></div></header>
+<header><div class="wrap"><p class="kicker">Canadian Restaurant Profitability Benchmark</p>
+<h1>The average Canadian restaurant keeps {m0:.1f} cents of every dollar it sells</h1>
+<p class="by"><strong>Ben Shadabi</strong> · Business Analytics (BBA), George Brown College · Built by a former restaurant owner</p>
+<ul class="chips"><li><b>{m0:.1f}%</b><span>net margin, 2024</span></li><li><b>{LOSS_SHARE}%</b><span>of restaurants lost money</span></li><li><b>{d(p0)} to {d(p1)}</b><span>profit in my what-if</span></li></ul></div></header>
 <main id="main" class="wrap">
-<section class="kpis" aria-label="Key numbers">
-<div class="kpi"><div class="v">{m0:.1f}%</div><div class="l">Net profit margin</div><div class="s">Average restaurant, 2024: {d(p0)} on {d(rev)} revenue (ISED)</div></div>
-<div class="kpi"><div class="v">{LOSS_SHARE}%</div><div class="l">of restaurants lost money</div><div class="s">2024, ISED, {N_BUS:,} businesses</div></div>
-<div class="kpi"><div class="v">{op24:.1f}%</div><div class="l">Industry operating margin</div><div class="s">2024, Statistics Canada. Different basis from the {m0:.1f}% net margin</div></div>
-<div class="kpi"><div class="v sm">{d(p0)} to {d(p1)}</div><div class="l">What-if profit</div><div class="s">Margin {m0:.1f}% to {m1:.1f}% with three cost levers. A scenario, not a forecast</div></div>
-</section>
+
 
 <section class="card hero" aria-labelledby="h-wf"><div class="in"><div>
 <h2 id="h-wf">Three cost levers would take the average restaurant from {d(p0)} to {d(p1)} a year</h2>
