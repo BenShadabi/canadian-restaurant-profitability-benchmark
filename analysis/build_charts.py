@@ -50,7 +50,7 @@ def structure(ax):
     cols = [GREEN if l == "Net profit" else SLATE for l in labs]
     ax.barh(labs, vals, color=cols, height=0.62)
     for y, v in enumerate(vals): ax.text(v + 0.6, y, f"{v:.1f}%", va="center", fontsize=9, color=NAVY)
-    ax.set_title("Cost of sales and labour take 68 cents of each dollar\n(average restaurant, 2024, % of revenue)"); ax.set_xlim(0, 55); ax.xaxis.set_visible(False)
+    ax.set_title("Cost of sales and labour take 68 cents\nof each dollar (2024, % of revenue)"); ax.set_xlim(0, 55); ax.xaxis.set_visible(False)
     ax.spines["bottom"].set_visible(False)
 def waterfall(ax):
     steps = [("Profit\nbefore", profit0, None), ("Labour\n-10%", gain_lab, GREEN), ("Overhead\n-15%", gain_oh, GREEN),

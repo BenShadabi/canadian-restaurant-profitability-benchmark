@@ -4,7 +4,7 @@
 
 Built by **Ben Shadabi**, Business Analytics (BBA) student at George Brown College, Toronto. I co-founded and managed a take-out and delivery restaurant for three years, so I know which numbers matter in this industry. This project tests those ideas against public data.
 
-**[Open the interactive dashboard](docs/index.html)** (download the repo and open `docs/index.html`, or turn on GitHub Pages for the `/docs` folder).
+**[Project page](docs/index.html)** and **[dashboard](docs/dashboard.html)** (download the repo and open `docs/dashboard.html`, or turn on GitHub Pages for the `/docs` folder).
 
 ![Dashboard](assets/dashboard_page.png)
 
@@ -44,7 +44,7 @@ data/
   average_restaurant_2024.csv          average restaurant P&L and quartiles
   wages_food_services.csv              hourly wage series
 analysis/build_charts.py               rebuilds every PNG chart from the CSVs
-analysis/build_dashboard.py            rebuilds docs/index.html (the dashboard) from the CSVs
+analysis/build_dashboard.py            rebuilds docs/dashboard.html (the dashboard) from the CSVs
 assets/                                dashboard and individual charts
 docs/methodology.md                    definitions, sources, limitations
 ```
