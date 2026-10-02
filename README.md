@@ -4,7 +4,11 @@
 
 Built by **Ben Shadabi**, Business Analytics (BBA) student at George Brown College, Toronto. I co-founded and managed a take-out and delivery restaurant for three years, so I know which numbers matter in this industry. This project tests those ideas against public data.
 
-![Dashboard](assets/dashboard.png)
+**[Open the interactive dashboard](docs/index.html)** (download the repo and open `docs/index.html`, or turn on GitHub Pages for the `/docs` folder).
+
+![Dashboard](assets/dashboard_page.png)
+
+All six charts as one image: [assets/dashboard.png](assets/dashboard.png).
 
 ## Key findings
 1. **Margins are thin.** The average Canadian restaurant earned a 2.5% net profit margin in 2024 ($21,500 on $849,200 revenue). 42.3% of restaurants lost money. Industry-wide operating margin was 4.1%.
@@ -39,7 +43,8 @@ data/
   industry_trend.csv                   annual industry series 2019-2024
   average_restaurant_2024.csv          average restaurant P&L and quartiles
   wages_food_services.csv              hourly wage series
-analysis/build_charts.py               rebuilds every chart from the CSVs
+analysis/build_charts.py               rebuilds every PNG chart from the CSVs
+analysis/build_dashboard.py            rebuilds docs/index.html (the dashboard) from the CSVs
 assets/                                dashboard and individual charts
 docs/methodology.md                    definitions, sources, limitations
 ```
@@ -48,6 +53,7 @@ docs/methodology.md                    definitions, sources, limitations
 ```
 pip install pandas matplotlib
 python analysis/build_charts.py
+python analysis/build_dashboard.py
 ```
 Open the workbook and change the blue cells on the **Scenario** tab to test other cuts.
 
