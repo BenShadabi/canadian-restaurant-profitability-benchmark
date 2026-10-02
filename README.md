@@ -2,7 +2,7 @@
 
 **Business question:** where does a typical Canadian restaurant make and lose money, and how much would tighter labour, overhead and waste control change its profit?
 
-Built by **Ben Shadabi**, Business Analytics (BBA) student at George Brown College, Toronto. I co-founded and managed a take-out and delivery restaurant for three years, so I know which numbers matter in this industry. This project tests those ideas against public data.
+Built by **Ben Shadabi** with Claude Code, Business Analytics (BBA) student at George Brown College, Toronto. I co-founded and managed a take-out and delivery restaurant for three years, so I know which numbers matter in this industry. This project tests those ideas against public data. Every figure comes from the published releases linked in `docs/methodology.md`.
 
 **[Project page](docs/index.html)** and **[dashboard](docs/dashboard.html)** (download the repo and open `docs/dashboard.html`, or turn on GitHub Pages for the `/docs` folder).
 
@@ -13,7 +13,7 @@ All six charts as one image: [assets/dashboard.png](assets/dashboard.png).
 ## Key findings
 1. **Margins are thin.** The average Canadian restaurant earned a 2.5% net profit margin in 2024 ($21,500 on $849,200 revenue). 42.3% of restaurants lost money. Industry-wide operating margin was 4.1%.
 2. **Cost of sales and labour take about 68 cents of each dollar** (44.8% and 23.6% of revenue for the average restaurant). Rent is 8.4%.
-3. **Counter and take-out style places were more resilient in the pandemic.** In 2020, full-service restaurants' operating margin fell to 0.3% while limited-service places earned 5.3% (6.9% in 2021). Limited-service revenue passed full-service in 2024 ($44.9B vs $44.2B).
+3. **Counter and take-out style places were more resilient in the pandemic.** In 2020, full-service restaurants' operating margin fell to 0.3% while limited-service places earned 5.3% (6.9% in 2021). Limited-service revenue was ahead of full-service in 2020, 2021 and 2024 ($44.9B vs $44.2B in 2024).
 4. **Wages are rising.** Average hourly pay in food services went from $16.78 (2020) to $19.48 (2024), up 16.1%.
 5. **Small cost gains move profit a lot.** Because profit is only 2.5% of revenue, a +35% profit increase needs about $7,500 a year. That equals a 3.8% labour cut alone, or a 2.0% cut to cost of sales.
 
@@ -43,9 +43,14 @@ data/
   industry_trend.csv                   annual industry series 2019-2024
   average_restaurant_2024.csv          average restaurant P&L and quartiles
   wages_food_services.csv              hourly wage series
+  restaurant_counts_2024.csv           business count and share of restaurants with a loss
+  sensitivity_labour_overhead.csv      profit at different labour and overhead cuts
 analysis/build_charts.py               rebuilds every PNG chart from the CSVs
 analysis/build_dashboard.py            rebuilds docs/dashboard.html (the dashboard) from the CSVs
 assets/                                dashboard and individual charts
+sql/queries.sql                        6 SQL queries on the same data (window functions, CTEs)
+sql/run_queries.py                     loads the CSVs into SQLite, runs the queries, writes sql/results.md
+docs/index.html, docs/dashboard.html   project page and dashboard
 docs/methodology.md                    definitions, sources, limitations
 ```
 
@@ -54,14 +59,13 @@ docs/methodology.md                    definitions, sources, limitations
 pip install pandas matplotlib
 python analysis/build_charts.py
 python analysis/build_dashboard.py
+python sql/run_queries.py
 ```
 Open the workbook and change the blue cells on the **Scenario** tab to test other cuts.
 
 ## Limitations
 - Averages hide wide differences between restaurants. The bottom quartile averaged a $13,000 loss while the top quartile averaged a $90,600 profit.
 - The two sources use different bases. ISED reports **net profit** for small restaurants (2.5% margin); Statistics Canada reports **operating profit** for the whole industry (4.1%). Compare lines within one source only.
-- Some 2019 and 2022 figures come from later releases that compare back to those years (Statistics Canada revised 2022 in 2024). Some segment margins for 2023 and 2024 were not in the releases I read, so they are blank.
+- Full-service plus limited-service revenue is less than the industry total ($89.1B vs $99.6B in 2024) because drinking places and other food services are not shown.
+- Some 2019 and 2022 figures come from later releases that compare back to those years (Statistics Canada revised 2022 in 2024). Statistics Canada also revised 2020 later (full-service margin 0.5% instead of 0.3%), so I use the first published figures and label them. Segment margins for 2023 and 2024 were not published, and the 2019 limited-service margin is not stated in the releases, so those are blank.
 - Scenario results are what-ifs on an average restaurant. They are not forecasts.
-
-## Next steps
-Add the monthly Statistics Canada revenue table (21-10-0019-01), retail food prices (18-10-0245-01) and the restaurant CPI to chart seasonality and ingredient costs against menu prices. Add Toronto DineSafe inspection data for a local view.

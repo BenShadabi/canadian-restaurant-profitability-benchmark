@@ -1,7 +1,6 @@
 """Build docs/dashboard.html (the dashboard) from the CSV files in data/.
 Every number on the page is read from the CSVs or computed here. Nothing is typed in by hand
-except the 42.3% share of loss-making restaurants, which comes from the ISED note in the workbook
-(Benchmark tab) and is also in the README.
+(the share of loss-making restaurants is in data/restaurant_counts_2024.csv).
 Run from the repo root:  python analysis/build_dashboard.py
 Requires: pandas
 """
@@ -11,11 +10,12 @@ import pandas as pd
 # ---------- design tokens (Option A: "Ledger", light, navy + one gold accent) ----------
 INK, NAVY, SLATE, MUTED, GRID = "#0F1B2D", "#12355B", "#5B7189", "#4B5563", "#D5DAE1"
 GOLD, GOLD_TXT, GREEN, RED = "#B7791F", "#8A5A00", "#1B7F5C", "#B42318"
-LOSS_SHARE = 42.3  # % of restaurants with a loss, ISED note (workbook, Benchmark tab)
 
 ind = pd.read_csv("data/industry_trend.csv")
 avg = pd.read_csv("data/average_restaurant_2024.csv").set_index("line")["dollars"]
 wag = pd.read_csv("data/wages_food_services.csv")
+cnt = pd.read_csv("data/restaurant_counts_2024.csv").set_index("metric")["value"]
+LOSS_SHARE, N_BUS = cnt["loss_making_share"], int(cnt["businesses"])
 
 # ---------- numbers (same maths as analysis/build_charts.py and the workbook Scenario tab) ----------
 rev, cos, lab, util = avg["revenue"], avg["cost_of_sales"], avg["labour_and_commissions"], avg["utilities_and_telecom"]
@@ -53,14 +53,14 @@ def line_chart(uid, title, desc, years, series, ymin, ymax, ticks, fmt, label_al
     for y in years:
         s.append(f'<text x="{xs[y]:.1f}" y="{H-12}" text-anchor="middle" class="ax">{y}</text>')
     for si, (name, vals, color, mk, dash) in enumerate(series):
-        pts = [(xs[y], ypx(v), v, y) for y, v in zip(years, vals)]
+        pts = [(xs[y], ypx(v), v, y) for y, v in zip(years, vals) if not pd.isna(v)]
         s.append(f'<polyline fill="none" stroke="{color}" stroke-width="2.5" {dash} points="{" ".join(f"{x:.1f},{yy:.1f}" for x,yy,_,_ in pts)}"/>')
         for x, yy, v, y in pts:
             s.append(f'<circle cx="{x:.1f}" cy="{yy:.1f}" r="4.5" fill="{color}"/>' if mk == "o" else
                      f'<rect x="{x-4:.1f}" y="{yy-4:.1f}" width="8" height="8" fill="{color}"/>')
             if label_all or y in (years[0], years[-1]):
                 other_v = series[1 - si][1][years.index(y)] if len(series) == 2 else None
-                above = True if other_v is None else v >= other_v
+                above = True if (other_v is None or pd.isna(other_v)) else v >= other_v
                 ty = yy - 10 if above else yy + 19
                 tc = color if color != GOLD else GOLD_TXT
                 s.append(f'<text x="{x:.1f}" y="{ty:.1f}" text-anchor="middle" class="lb" fill="{tc}">{fmt(v, True)}</text>')
@@ -123,6 +123,16 @@ svg_ind = line_chart("im", "Industry operating margin, 2019 to 2024",
     ", ".join(f"{int(y)} {v*100:.1f}%" for y, v in zip(ind.year, ind.operating_margin)) + ".",
     list(ind.year), [("Industry", list(ind.operating_margin * 100), NAVY, "o", "")], 0, 6, [0, 2, 4, 6], pct)
 
+# ---------- sensitivity grid: labour cut x overhead cut (waste lever left out) ----------
+LABS, OHS = [0, 0.05, 0.10, 0.15], [0, 0.10, 0.15, 0.20]
+grid = [[p0 + lab * l + (util + other) * o for o in OHS] for l in LABS]
+sens_rows = "".join("<tr><th scope='row'>Labour %s</th>%s</tr>" % (('-%d%%' % (l * 100)) if l else 'no cut', "".join(
+    f"<td{' class=hl' if (l, o) == (LAB_CUT, OH_CUT) else ''}>{d(v)}<small>{v / rev * 100:.1f}%</small></td>" for o, v in zip(OHS, row))) for l, row in zip(LABS, grid))
+SENS = (f'<section class="card hero" aria-labelledby="h-sens"><h2 id="h-sens">Even a 5% labour cut and a 10% overhead cut lift profit from {d(p0)} to {d(grid[1][1])}</h2>'
+        '<p class="sub">Annual profit (and margin) for the average restaurant at different labour and overhead cuts. The waste lever is left out, so the highlighted cell is {} lower than the waterfall total.</p>'.format(d(g_waste)) +
+        '<div class="tw"><table class="sens"><thead><tr><th scope="col"></th>' + "".join(f"<th scope='col'>Overhead {('-%d%%' % int(o*100)) if o else 'no cut'}</th>" for o in OHS) + "</tr></thead><tbody>" + sens_rows + "</tbody></table></div></section>")
+pd.DataFrame([[f"{l:.2f}", *[round(v, 2) for v in row]] for l, row in zip(LABS, grid)], columns=["labour_cut", *[f"overhead_cut_{o:.2f}" for o in OHS]]).to_csv("data/sensitivity_labour_overhead.csv", index=False)
+
 # ---------- HTML pieces ----------
 cost_rows = [("Cost of sales", cos, NAVY), ("Labour", lab, NAVY), ("Other expenses (calculated remainder)", other, SLATE),
              ("Rent", avg["rent"], SLATE), ("Amortization", avg["amortization_and_depletion"], SLATE),
@@ -178,6 +188,7 @@ svg{{width:100%;height:auto;display:block}}svg .ax{{font:15px var(--sans);fill:v
 .bars{{list-style:none;margin:0;padding:0}}.bars li{{display:grid;grid-template-columns:minmax(120px,38%) 1fr 56px;gap:var(--sp2);align-items:center;margin:0 0 var(--sp2);font-size:.9375rem}}
 .bars .bar{{display:block;background:#EEF1F5;height:16px;border-radius:2px;position:relative}}.bars .bar i{{position:absolute;top:0;bottom:0;left:0;border-radius:2px}}
 .bars .q i{{}}.bars .q u{{position:absolute;top:-3px;bottom:-3px;width:1px;background:var(--ink)}}.bars b{{text-align:right;font-variant-numeric:tabular-nums}}
+.sens td{{text-align:right}}.sens small{{display:block;color:var(--muted)}}.sens td.hl{{background:#FFF8E6;font-weight:600}}
 .note{{background:#FFF8E6;border-left:4px solid var(--gold);padding:var(--sp2) var(--sp3);font-size:.9375rem;margin:var(--sp3) 0 0}}
 .notes{{margin:var(--sp4) 0;padding:var(--sp3);background:var(--card);border:1px solid var(--grid);border-radius:6px;font-size:.9375rem}}
 .notes ul{{margin:var(--sp2) 0 0;padding-left:1.2em}}.notes li{{margin-bottom:var(--sp1)}}
@@ -203,7 +214,7 @@ page = f"""<!doctype html>
 <main id="main" class="wrap">
 <section class="kpis" aria-label="Key numbers">
 <div class="kpi"><div class="v">{m0:.1f}%</div><div class="l">Net profit margin</div><div class="s">Average restaurant, 2024: {d(p0)} on {d(rev)} revenue (ISED)</div></div>
-<div class="kpi"><div class="v">{LOSS_SHARE}%</div><div class="l">of restaurants lost money</div><div class="s">2024, ISED, 65,071 businesses</div></div>
+<div class="kpi"><div class="v">{LOSS_SHARE}%</div><div class="l">of restaurants lost money</div><div class="s">2024, ISED, {N_BUS:,} businesses</div></div>
 <div class="kpi"><div class="v">{op24:.1f}%</div><div class="l">Industry operating margin</div><div class="s">2024, Statistics Canada. Different basis from the {m0:.1f}% net margin</div></div>
 <div class="kpi"><div class="v sm">{d(p0)} to {d(p1)}</div><div class="l">What-if profit</div><div class="s">Margin {m0:.1f}% to {m1:.1f}% with three cost levers. A scenario, not a forecast</div></div>
 </section>
@@ -215,13 +226,14 @@ page = f"""<!doctype html>
 <ul class="key" style="display:block"><li>Labour -10%: <b>+{d(g_lab)}</b></li><li>Overhead (utilities, telecom, other) -15%: <b>+{d(g_oh)}</b></li><li>Food waste -20%: <b>+{d(g_waste)}</b></li></ul>
 <p class="note"><b>Assumption:</b> food waste is taken as {WASTE_SHARE*100:.0f}% of cost of sales. That share is my assumption, not source data. This is a what-if, not a forecast.</p></div></div></section>
 
+{SENS}
 <div class="grid">
 <section class="card" aria-labelledby="h-cost"><h2 id="h-cost">Cost of sales and labour take about {(cos+lab)/rev*100:.0f} cents of each revenue dollar</h2>
 <p class="sub">Share of revenue, average restaurant, 2024 (ISED). "Other expenses" is revenue minus every listed line and profit.</p><ul class="bars">{cost_html}</ul></section>
 <section class="card" aria-labelledby="h-q"><h2 id="h-q">Averages hide a wide gap: the bottom quartile lost {d(-lo)}, the top quartile made {d(hi)}</h2>
 <p class="sub">Average profit per restaurant by quartile, 2024 (ISED). The line marks $0.</p><ul class="bars">{quart_html}</ul></section>
 <section class="card" aria-labelledby="h-sm"><h2 id="h-sm">In 2020 full-service margin fell to 0.3% while limited-service held {ind.limited_service_margin.iloc[1]*100:.1f}%</h2>
-<p class="sub">Operating margin by segment, 2019 to 2022 (Statistics Canada). 2023 and 2024 segment margins were not in the releases I read.</p>{svg_seg_margin}
+<p class="sub">Operating margin by segment, 2019 to 2022 (Statistics Canada). Segment margins for 2023 and 2024 were not published, and the 2019 limited-service margin is not stated in the releases. 2020 was later revised (full-service 0.5%).</p>{svg_seg_margin}
 <ul class="key"><li><span style="border-color:{NAVY}"></span>Full-service</li><li><span style="border-color:{GOLD};border-top-style:dashed"></span>Limited-service</li></ul></section>
 <section class="card" aria-labelledby="h-sr"><h2 id="h-sr">Limited-service revenue was ahead of full-service in 2020, 2021 and 2024 ({bn(ind.limited_service_revenue_bn.iloc[-1],True)} vs {bn(ind.full_service_revenue_bn.iloc[-1],True)})</h2>
 <p class="sub">Revenue by segment, $ billion, 2019 to 2024 (Statistics Canada).</p>{svg_seg_rev}
@@ -234,7 +246,7 @@ page = f"""<!doctype html>
 
 <section class="notes" aria-labelledby="h-n"><h2 id="h-n">How to read these numbers</h2><ul>
 <li><b>Two sources, two bases.</b> ISED reports <b>net profit</b> for small restaurants ({m0:.1f}% margin). Statistics Canada reports <b>operating profit</b> for the whole industry ({op24:.1f}%). Compare lines within one source only.</li>
-<li>Some 2019 and 2022 figures come from later releases that compare back to those years. Blank segment margins mean the release did not give them.</li>
+<li>Full-service plus limited-service revenue is less than the industry total because drinking places and other food services are not shown ($89.1B vs $99.6B in 2024). Some 2019 and 2022 figures come from later releases that compare back to those years. Blank margins were not published.</li>
 <li>The what-if applies cuts to an average restaurant. It does not describe any one business.</li></ul>
 <p>Method and sources: <a href="methodology.md">methodology</a> and <a href="data_dictionary.md">data dictionary</a>. Contains information licensed under the Open Government Licence - Canada.</p></section>
 

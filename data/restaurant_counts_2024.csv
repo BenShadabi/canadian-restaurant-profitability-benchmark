@@ -1,0 +1,4 @@
+metric,value,unit,source
+businesses,65071,count,ISED CIS NAICS 7225 2024
+profitable_share,57.7,percent,ISED CIS NAICS 7225 2024
+loss_making_share,42.3,percent,ISED CIS NAICS 7225 2024

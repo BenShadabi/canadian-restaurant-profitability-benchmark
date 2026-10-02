@@ -5,7 +5,8 @@
 2. Typed each value into CSV files with a source column (`data/`) and into the workbook (blue cells = typed inputs, black = formulas).
 3. Checked growth rates against the releases' own statements (for example, 2020 revenue -25.5% vs 2019; 2022 revenue +7.4% vs 2019).
 4. Built a scenario that applies labour, overhead and waste cuts to the average restaurant and solves for the cut that would give +35% profit.
-5. Rebuilt all charts from the CSVs with `analysis/build_charts.py`.
+5. Rebuilt all charts from the CSVs with `analysis/build_charts.py`, the dashboard with `analysis/build_dashboard.py`, and ran 6 SQL queries (`sql/`) on the same data.
+6. Re-checked the 2020 to 2024 figures against the Statistics Canada releases (October 2026). The 2019 limited-service margin could not be confirmed, so it is left blank.
 
 ## Definitions
 - **Average restaurant:** ISED Canadian Industry Statistics, NAICS 7225 (full-service restaurants and limited-service eating places), 65,071 businesses with revenue $30,000 to $5,000,000, 2024.
@@ -30,4 +31,4 @@
 - Statistics Canada, The Daily, annual 2020: https://www150.statcan.gc.ca/n1/daily-quotidien/220412/dq220412e-eng.htm
 
 ## Known limitations
-See the README. In short: averages, different bases between sources, approximations for 2019 and 2022, blank segment margins for 2023 and 2024, and the scenario is a what-if.
+See the README. In short: segment revenue does not add up to the industry total, 2020 was later revised, averages, different bases between sources, approximations for 2019 and 2022, blank segment margins for 2023 and 2024, and the scenario is a what-if.

@@ -8,7 +8,7 @@
 | operating_expenses_bn | Total operating expenses | $ billions |
 | operating_margin | (revenue - expenses) / revenue | share |
 | full_service_revenue_bn / limited_service_revenue_bn | Revenue by restaurant type | $ billions |
-| full_service_margin / limited_service_margin | Operating margin by type. Blank = not in the releases read | share |
+| full_service_margin / limited_service_margin | Operating margin by type. Blank = not published in the releases | share |
 | cogs_share_of_expenses | Cost of goods sold as share of operating expenses | share |
 | wages_share_of_expenses | Wages as share of operating expenses | share |
 | source | Release the row came from | text |
@@ -20,6 +20,12 @@ Columns: revenue, cost_of_sales, labour_and_commissions, rent, utilities_and_tel
 
 ## data/wages_food_services.csv
 Average hourly wage, accommodation and food services, dollars per hour (Statistics Canada Table 14-10-0206-01, via ISED), 2020 to 2024.
+
+## data/restaurant_counts_2024.csv (ISED)
+Columns: metric, value, unit, source. Business count (65,071) and the share of restaurants that were profitable (57.7%) or lost money (42.3%).
+
+## data/sensitivity_labour_overhead.csv (calculated)
+Average restaurant profit in dollars for labour cuts (rows) and overhead cuts (columns). The waste lever is not included. Written by `analysis/build_dashboard.py`.
 
 ## Notes
 - ISED = net profit (small restaurants). Statistics Canada = operating profit (whole industry). Do not mix the two.
