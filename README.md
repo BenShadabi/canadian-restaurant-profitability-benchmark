@@ -6,7 +6,7 @@
 
 **Business question:** where does a typical Canadian restaurant make and lose money, and how much would tighter labour, overhead and waste control change its profit?
 
-I'm Ben Shadabi, a Business Analytics (BBA) student at George Brown College in Toronto. I built this with Claude Code. I co-founded and managed a restaurant for three years, so I know which numbers matter in this industry, and this project tests those ideas against public data. Every figure comes from the published releases linked in `docs/methodology.md`.
+I'm Ben Shadabi, a Business Analytics (BBA) student at George Brown College in Toronto. I built this with Claude Code. I co-founded and managed a dine-in and take-out restaurant for three years, so I know which numbers matter in this industry, and this project tests those ideas against public data. Every figure comes from the published releases linked in `docs/methodology.md`.
 
 [Project page](docs/index.html) and [dashboard](docs/dashboard.html). To open them, download the repo and open the files in a browser, or turn on GitHub Pages for the `/docs` folder. The dashboard has a dark mode and hover tooltips on the charts.
 
