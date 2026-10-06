@@ -1,5 +1,5 @@
 """Load the CSVs into an in-memory SQLite database, run sql/queries.sql and write sql/results.md.
-Run from the repo root:  python sql/run_queries.py        Requires: pandas (sqlite3 is built in)
+Run from the repo root:  python sql/run_queries.py        Requires: pandas, tabulate (sqlite3 is built in). Install with: pip install -r requirements.txt
 """
 import re, sqlite3, pandas as pd
 con = sqlite3.connect(":memory:")
@@ -12,6 +12,10 @@ for q in queries:
     head = re.findall(r"(?m)^--\s*(.*)$", q)[-1]
     df = pd.read_sql_query(re.sub(r"(?m)^--.*\n", "", q), con)
     df = df.astype(object).where(df.notna(), "n/a")
-    out += [f"## {head}", "", df.to_markdown(index=False) if hasattr(df, "to_markdown") else df.to_string(index=False), ""]
+    try:
+        table = df.to_markdown(index=False)
+    except ImportError:  # tabulate is not installed: fall back to plain text so the script still runs
+        table = "```\n" + df.to_string(index=False) + "\n```"
+    out += [f"## {head}", "", table, ""]
 open("sql/results.md", "w").write("\n".join(out))
 print(f"ran {len(queries)} queries, wrote sql/results.md")

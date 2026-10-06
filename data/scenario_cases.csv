@@ -1,0 +1,4 @@
+case,labour_gain,overhead_gain,waste_gain,profit,margin,note
+Before,0.0,0.0,0.0,21500.0,0.0253,"ISED average restaurant, 2024"
+Conservative,20020.0,3225.0,3804.0,48549.0,0.0572,Overhead = published utilities and telecom line only
+Headline,20020.0,22845.0,3804.0,68169.0,0.0803,Overhead = utilities + calculated other expenses

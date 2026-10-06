@@ -27,6 +27,15 @@ Columns: metric, value, unit, source. Business count (65,071) and the share of r
 ## data/sensitivity_labour_overhead.csv (calculated)
 Average restaurant profit in dollars for labour cuts (rows) and overhead cuts (columns). The waste lever is not included. Written by `analysis/build_dashboard.py`.
 
+## data/scenario_cases.csv (calculated)
+One row each for before, conservative and headline. Columns: labour_gain, overhead_gain, waste_gain, profit, margin, note. Conservative applies the overhead cut to utilities and telecom only. Written by `analysis/build_scenarios.py`.
+
+## data/lever_per_point.csv (calculated)
+Profit gain in dollars from a 1% cut in cost of sales, labour and overhead (utilities plus calculated other expenses).
+
+## data/waste_share_range.csv (calculated)
+Profit in the conservative and headline cases for an assumed waste share of 2% to 8% of cost of sales.
+
 ## Notes
 - ISED = net profit (small restaurants). Statistics Canada = operating profit (whole industry). Do not mix the two.
 - 2019 and some 2022 values come from later releases that compare back to those years.

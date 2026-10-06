@@ -7,6 +7,8 @@
 4. Built a scenario that applies labour, overhead and waste cuts to the average restaurant and solves for the cut that would give +35% profit.
 5. Rebuilt all charts from the CSVs with `analysis/build_charts.py`, the dashboard with `analysis/build_dashboard.py`, and ran 6 SQL queries (`sql/`) on the same data.
 6. Re-checked the 2020 to 2024 figures against the Statistics Canada releases (October 2026). The 2019 limited-service margin could not be confirmed, so it is left blank.
+7. Added a conservative case that leaves out the calculated "other expenses" line, a per-1% lever table and a waste-share range (`analysis/build_scenarios.py`).
+8. Added `checks.py`, which recomputes every headline number from the CSVs and compares it with the README, the dashboard, the SQL results and the workbook inputs. It runs on every push.
 
 ## Definitions
 - **Average restaurant:** ISED Canadian Industry Statistics, NAICS 7225 (full-service restaurants and limited-service eating places), 65,071 businesses with revenue $30,000 to $5,000,000, 2024.
@@ -20,6 +22,9 @@
 - Overhead saving = (utilities + other expenses) x cut
 - Waste saving = cost of sales x assumed waste share x reduction
 - Cut needed for +35% profit = 0.35 x profit / base cost line
+- Conservative case: the same labour and waste cuts, but the overhead cut applies to utilities and telecom only (published line), not to the calculated other expenses
+- Profit gain from a 1% cut in a line = line x 0.01
+- Waste share range: 2% to 8% of cost of sales (my assumption, not source data)
 
 ## Sources
 - ISED, Canadian Industry Statistics, NAICS 7225 financial performance: https://ised-isde.canada.ca/app/ixb/cis/performance/rev/7225

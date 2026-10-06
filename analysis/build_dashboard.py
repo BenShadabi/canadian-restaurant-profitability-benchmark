@@ -2,7 +2,7 @@
 Every number on the page is read from the CSVs or computed here. Nothing is typed in by hand
 (the share of loss-making restaurants is in data/restaurant_counts_2024.csv).
 Run from the repo root:  python analysis/build_dashboard.py
-Requires: pandas
+Requires: pandas (analysis/scenario.py holds the conservative-case maths)
 """
 import html
 import pandas as pd
@@ -133,6 +133,25 @@ SENS = (f'<section class="card hero" aria-labelledby="h-sens"><h2 id="h-sens">Ev
         '<div class="tw"><table class="sens"><thead><tr><th scope="col"></th>' + "".join(f"<th scope='col'>Overhead {('-%d%%' % int(o*100)) if o else 'no cut'}</th>" for o in OHS) + "</tr></thead><tbody>" + sens_rows + "</tbody></table></div></section>")
 pd.DataFrame([[f"{l:.2f}", *[round(v, 2) for v in row]] for l, row in zip(LABS, grid)], columns=["labour_cut", *[f"overhead_cut_{o:.2f}" for o in OHS]]).to_csv("data/sensitivity_labour_overhead.csv", index=False)
 
+# ---------- conservative case and per-1% levers (numbers come from analysis/scenario.py) ----------
+import scenario
+sc = scenario.load()
+case_rows = [("Profit before", sc["profit"], SLATE), ("Conservative case", sc["conservative"], GOLD), ("Headline what-if", sc["headline"], NAVY)]
+case_scale = sc["headline"] * 1.05
+cases_li = "".join(f'<li><span class="k">{n}</span><span class="bar"><i style="width:{v/case_scale*100:.1f}%;background:{c}"></i></span><b>{d(v)}</b></li>'
+                   for n, v, c in case_rows)
+pp_scale = max(sc["per_point"].values()) * 1.05
+pp_li = "".join(f'<li><span class="k">{html.escape(n)}</span><span class="bar"><i style="width:{v/pp_scale*100:.1f}%;background:{NAVY}"></i></span><b>{d(v)}</b></li>'
+                for n, v in sorted(sc["per_point"].items(), key=lambda kv: -kv[1]))
+wr = sc["waste_range"]
+CASES = (f'<section class="card hero" aria-labelledby="h-cases"><div class="in"><div>'
+         f'<h2 id="h-cases">Using only published cost lines, profit still more than doubles: {d(sc["profit"])} to {d(sc["conservative"])}</h2>'
+         f'<p class="sub">Same cuts as the what-if. The conservative case takes overhead as the published utilities and telecom line only and leaves out the calculated "other expenses" remainder ({d(sc["other"])}). Margin: {sc["margin_conservative"]*100:.1f}% against {sc["margin_headline"]*100:.1f}% in the headline case.</p>'
+         f'<ul class="bars">{cases_li}</ul></div>'
+         f'<div><h2>A 1% cut to cost of sales is worth almost twice a 1% cut to labour</h2>'
+         f'<p class="sub">Annual profit gain from a 1% cut in each cost line, average restaurant, 2024.</p><ul class="bars">{pp_li}</ul>'
+         f'<p class="note"><b>Check:</b> the assumed waste share barely matters. Testing 2% to 8% moves the headline profit between {d(wr[0]["profit_headline"])} and {d(wr[-1]["profit_headline"])}.</p></div></div></section>')
+
 # ---------- HTML pieces ----------
 cost_rows = [("Cost of sales", cos, NAVY), ("Labour", lab, NAVY), ("Other expenses (calculated remainder)", other, SLATE),
              ("Rent", avg["rent"], SLATE), ("Amortization", avg["amortization_and_depletion"], SLATE),
@@ -221,9 +240,10 @@ page = f"""<!doctype html>
 <p class="sub">What-if on the 2024 average restaurant. Annual profit, $.</p>{waterfall()}</div>
 <div><p><b>Why it matters:</b> profit is only {m0:.1f}% of revenue, so a small cost change is a big profit change. Reaching +35% profit needs about $7,500 a year, a 3.8% labour cut on its own.</p>
 <ul class="key" style="display:block"><li>Labour -10%: <b>+{d(g_lab)}</b></li><li>Overhead (utilities, telecom, other) -15%: <b>+{d(g_oh)}</b></li><li>Food waste -20%: <b>+{d(g_waste)}</b></li></ul>
-<p class="note"><b>Assumption:</b> food waste is taken as {WASTE_SHARE*100:.0f}% of cost of sales. That share is my assumption, not source data. This is a what-if, not a forecast.</p></div></div></section>
+<p class="note"><b>Assumption:</b> food waste is taken as {WASTE_SHARE*100:.0f}% of cost of sales. That share is my assumption, not source data. Overhead includes a calculated remainder of expenses, so a conservative case follows below. This is a what-if, not a forecast.</p></div></div></section>
 
 {SENS}
+{CASES}
 <div class="grid">
 <section class="card" aria-labelledby="h-cost"><h2 id="h-cost">Cost of sales and labour take about {(cos+lab)/rev*100:.0f} cents of each revenue dollar</h2>
 <p class="sub">Share of revenue, average restaurant, 2024 (ISED). "Other expenses" is revenue minus every listed line and profit.</p><ul class="bars">{cost_html}</ul></section>

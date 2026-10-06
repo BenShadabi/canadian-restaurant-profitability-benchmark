@@ -68,3 +68,36 @@ SELECT MAX(CASE WHEN line='bottom_quartile_profit' THEN dollars END) AS bottom_q
        MAX(CASE WHEN line='top_quartile_profit' THEN dollars END) AS top_quartile,
        MAX(CASE WHEN line='top_quartile_profit' THEN dollars END) - MAX(CASE WHEN line='bottom_quartile_profit' THEN dollars END) AS spread
 FROM average_restaurant;
+
+-- 7. Conservative case: same cuts, but overhead is only the published utilities line
+WITH a AS (
+  SELECT MAX(CASE WHEN line='revenue' THEN dollars END) AS revenue,
+         MAX(CASE WHEN line='cost_of_sales' THEN dollars END) AS cos,
+         MAX(CASE WHEN line='labour_and_commissions' THEN dollars END) AS labour,
+         MAX(CASE WHEN line='utilities_and_telecom' THEN dollars END) AS util,
+         MAX(CASE WHEN line='net_profit' THEN dollars END) AS profit
+  FROM average_restaurant)
+SELECT profit AS profit_before,
+       labour * 0.10 AS labour_gain,
+       util * 0.15 AS utilities_gain,
+       cos * 0.05 * 0.20 AS waste_gain,
+       profit + labour * 0.10 + util * 0.15 + cos * 0.05 * 0.20 AS profit_after,
+       ROUND(profit * 100.0 / revenue, 1) AS margin_before_pct,
+       ROUND((profit + labour * 0.10 + util * 0.15 + cos * 0.05 * 0.20) * 100.0 / revenue, 1) AS margin_after_pct
+FROM a;
+
+-- 8. Profit gain from a 1% cut in each cost line
+WITH a AS (
+  SELECT MAX(CASE WHEN line='revenue' THEN dollars END) AS revenue,
+         MAX(CASE WHEN line='cost_of_sales' THEN dollars END) AS cos,
+         MAX(CASE WHEN line='labour_and_commissions' THEN dollars END) AS labour,
+         MAX(CASE WHEN line='rent' THEN dollars END) AS rent,
+         MAX(CASE WHEN line='utilities_and_telecom' THEN dollars END) AS util,
+         MAX(CASE WHEN line='amortization_and_depletion' THEN dollars END) AS amort,
+         MAX(CASE WHEN line='net_profit' THEN dollars END) AS profit
+  FROM average_restaurant),
+g AS (SELECT *, revenue - cos - labour - rent - util - amort - profit AS other FROM a)
+SELECT 'Cost of sales' AS line, ROUND(cos * 0.01) AS gain_per_1pct_cut FROM g
+UNION ALL SELECT 'Labour', ROUND(labour * 0.01) FROM g
+UNION ALL SELECT 'Overhead (utilities + calculated other)', ROUND((util + other) * 0.01) FROM g
+ORDER BY gain_per_1pct_cut DESC;
