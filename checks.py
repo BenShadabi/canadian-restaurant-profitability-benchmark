@@ -97,6 +97,18 @@ for label, text in [
     ("wage change", "16.1%"), ("waste range low", usd(w2)), ("waste range high", usd(w8)),
 ]:
     check(f"docs/dashboard.html shows {label}", text in dash)
+page = read("docs/index.html")
+for label, text in [("2.5%", "2.5%"), ("42.3%", "42.3%"), ("revenue and profit", "$21,500 on $849,200"), ("headline profit", usd(after)),
+                    ("conservative profit", usd(after_cons)), ("conservative margin", "5.7%"), ("calculated line", usd(other)),
+                    ("bottom quartile", "$13,000"), ("top quartile", "$90,600"), ("labour gain", usd(g_lab)), ("overhead gain", usd(g_oh)), ("waste gain", usd(g_waste)),
+                    ("1% cost of sales", usd(cos * 0.01)), ("1% labour", usd(lab * 0.01)), ("1% overhead", usd((util + other) * 0.01))]:
+    check(f"docs/index.html shows {label}", text in page)
+n_sql = len([q for q in open("sql/queries.sql", encoding="utf-8").read().split(";") if "SELECT" in q])
+check("README and project page say how many SQL queries there are", f"{n_sql} SQL queries" in readme and "Eight SQL queries" in page and n_sql == 8)
+check("no em dashes in README, project page, dashboard or docs", not any("\u2014" in read(f) for f in ["README.md", "docs/index.html", "docs/dashboard.html", "docs/methodology.md", "docs/data_dictionary.md"]))
+import struct
+png = open("assets/banner.png", "rb").read(24)
+check("assets/banner.png is 1280x640", png[:8] == b"\x89PNG\r\n\x1a\n" and struct.unpack(">II", png[16:24]) == (1280, 640))
 sql_out = read("sql/results.md")
 check("sql/results.md has the headline and conservative totals", "68169" in sql_out and "48549" in sql_out and "130800" in sql_out)
 

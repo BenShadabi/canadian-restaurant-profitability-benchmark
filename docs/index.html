@@ -1,57 +1,73 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark">
 <title>Canadian Restaurant Profitability Benchmark | Ben Shadabi</title>
 <meta name="description" content="The average Canadian restaurant keeps 2.5 cents of every revenue dollar, and 42.3% lose money. A student project using public Statistics Canada and ISED data.">
+<meta property="og:title" content="Canadian Restaurant Profitability Benchmark">
+<meta property="og:description" content="The average Canadian restaurant keeps 2.5 cents of every revenue dollar, and 42.3% lose money.">
+<meta property="og:image" content="https://raw.githubusercontent.com/BenShadabi/canadian-restaurant-profitability-benchmark/main/assets/banner.png">
+<meta name="twitter:card" content="summary_large_image">
 <style>
-:root{--ink:#0F1B2D;--navy:#12355B;--muted:#4B5563;--grid:#D5DAE1;--gold:#B7791F;--bg:#F6F8FA;
---serif:"Source Serif 4",Georgia,"Times New Roman",serif;--sans:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 var(--sans)}
-.wrap{max-width:760px;margin:0 auto;padding:0 20px}
-header{background:var(--navy);color:#fff;padding:40px 0 36px}
-.eyebrow{font-size:.875rem;color:#DCE6F2;margin:0 0 8px}
-h1{font:600 clamp(1.7rem,5vw,2.4rem)/1.2 var(--serif);margin:0 0 16px}
-header p{margin:0;color:#E8EEF6}
-h2{font:600 1.3rem/1.3 var(--serif);margin:40px 0 8px}
-.big{display:flex;gap:16px;flex-wrap:wrap;margin:24px 0}
-.big div{flex:1 1 200px;background:#fff;border:1px solid var(--grid);border-top:3px solid var(--navy);border-radius:6px;padding:14px 16px}
-.big b{display:block;font:600 1.9rem/1.1 var(--serif);color:var(--navy)}.big span{font-size:.9375rem;color:var(--muted)}
-figure{margin:20px 0;background:#fff;border:1px solid var(--grid);border-radius:6px;padding:12px}
-figure img{width:100%;height:auto;display:block}figcaption{font-size:.875rem;color:var(--muted);margin-top:8px}
-ul{padding-left:1.2em}li{margin-bottom:6px}
-.btn{display:inline-block;margin:6px 10px 6px 0;padding:12px 18px;min-height:44px;border-radius:6px;background:var(--navy);color:#fff;text-decoration:none;font-weight:600}
-.btn.alt{background:#fff;color:var(--navy);border:1px solid var(--navy)}
-a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
-.note{background:#FFF8E6;border-left:4px solid var(--gold);padding:10px 16px;font-size:.9375rem}
+@font-face{font-family:Geist;src:url(fonts/geist-latin-wght.woff2) format("woff2");font-weight:100 900;font-display:swap}
+:root{color-scheme:light dark;--ink:#0F1B2D;--muted:#4B5563;--grid:#D5DAE1;--bg:#F4F6F9;--card:#fff;--note:#FFF6E0;--gold:#B7791F;--link:#12355B;--btn:#12355B;--btnfg:#fff;--r:10px;
+--sans:Geist,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+@media(prefers-color-scheme:dark){:root{--ink:#E8EEF6;--muted:#A7B4C6;--grid:#2A3750;--bg:#0A111F;--card:#111B2E;--note:#2A2412;--gold:#BF8420;--link:#9CC3F0;--btn:#E3B965;--btnfg:#0F1B2D}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 var(--sans);font-variant-numeric:tabular-nums}
+.wrap{max-width:780px;margin:0 auto;padding:0 20px}
+header{background:#0E2745;color:#fff;border-bottom:4px solid #E3B965}
+header{padding:36px 0 32px}.eyebrow{font-size:.875rem;letter-spacing:.06em;text-transform:uppercase;color:#E3B965;font-weight:600;margin:0 0 10px}
+figure.hero{padding:0;overflow:hidden;margin:28px 0 0;background:#0E2745;border:0}
+h1{font:650 clamp(1.7rem,5vw,2.6rem)/1.12 var(--sans);letter-spacing:-.02em;margin:0 0 12px}
+header p{margin:0;color:#C9D8EA}
+h2{font:650 1.3rem/1.3 var(--sans);letter-spacing:-.01em;margin:44px 0 10px;text-wrap:balance}
+.big{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:28px 0}
+.big div{background:var(--card);border:1px solid var(--grid);border-top:3px solid var(--gold);border-radius:var(--r);padding:14px 16px}
+.big b{display:block;font:650 1.7rem/1.1 var(--sans);letter-spacing:-.01em}.big span{font-size:.9375rem;color:var(--muted)}
+figure{margin:22px 0;background:#fff;border:1px solid var(--grid);border-radius:var(--r);padding:12px}
+figure img{width:100%;height:auto;display:block}figcaption{font-size:.875rem;color:#4B5563;margin-top:8px}
+ul{padding-left:1.2em}li{margin-bottom:8px}
+.btn{display:inline-flex;align-items:center;margin:6px 10px 6px 0;padding:0 18px;min-height:48px;border-radius:var(--r);background:var(--btn);color:var(--btnfg);text-decoration:none;font-weight:600}
+.btn.alt{background:transparent;color:var(--link);border:1px solid var(--link)}
+a{color:var(--link)}a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.note{background:var(--note);border-left:4px solid var(--gold);padding:10px 16px;font-size:.9375rem;border-radius:0 6px 6px 0}
+code{font-size:.9em;background:var(--grid);padding:1px 6px;border-radius:4px}
 footer{color:var(--muted);font-size:.875rem;padding:24px 0 40px}
+@media(max-width:620px){.big{grid-template-columns:1fr}}
 </style></head><body>
-<header><div class="wrap"><p class="eyebrow">Student project by Ben Shadabi, Business Analytics, George Brown College</p>
-<h1>The average Canadian restaurant keeps 2.5 cents of every dollar it sells</h1>
-<p>In 2024 the average restaurant made $21,500 on $849,200 of revenue. 42.3% of restaurants lost money.</p></div></header>
+<header><div class="wrap"><p class="eyebrow">Student project by Ben Shadabi · Business Analytics (BBA), George Brown College</p>
+<h1>Canadian Restaurant Profitability Benchmark</h1>
+<p>The average Canadian restaurant keeps 2.5 cents of every dollar it sells. In 2024 it made $21,500 on $849,200 of revenue, and 42.3% of restaurants lost money.</p></div></header>
 <main class="wrap">
-<div class="big" aria-label="Key numbers">
+<figure class="hero"><img src="banner.png" width="1280" height="640" alt="One revenue dollar split into cost lines for the average Canadian restaurant: cost of sales 44.8 cents, labour 23.6, other expenses 15.4, rent 8.4, amortization 2.7, utilities 2.5 and profit 2.5."></figure>
+<div class="big">
 <div><b>2.5%</b><span>net profit margin, average restaurant, 2024</span></div>
 <div><b>42.3%</b><span>of restaurants lost money</span></div>
-<div><b>$21,500 to $68,169</b><span>profit in my what-if, margin 2.5% to 8.0%</span></div></div>
+<div><b>$21,500 to $48,549</b><span>profit in my cautious what-if, margin 2.5% to 5.7%</span></div></div>
 <p><a class="btn" href="dashboard.html">Open the dashboard</a><a class="btn alt" href="https://github.com/BenShadabi/canadian-restaurant-profitability-benchmark">Code and data on GitHub</a></p>
 
 <h2>What I found</h2>
 <p>Cost of sales (44.8% of revenue) and labour (23.6%) take about 68 cents of each dollar. Rent is 8.4%. With so little profit left, a small cost change moves profit a lot.</p>
 <figure><img src="cost_structure.png" width="1050" height="630" alt="Bar chart: cost of sales 44.8% of revenue, labour 23.6%, other expenses 15.4%, rent 8.4%, amortization 2.7%, utilities 2.5%, net profit 2.5%."><figcaption>Where each revenue dollar goes, average restaurant, 2024 (ISED).</figcaption></figure>
-<p>I tested three levers on that average restaurant: labour cost down 10%, overhead down 15%, and food waste down 20%. Together they move profit from $21,500 to $68,169.</p>
-<figure><img src="scenario_waterfall.png" width="1050" height="630" alt="Waterfall chart: profit before $21,500, labour plus $20,020, overhead plus $22,845, waste plus $3,804, profit after $68,169."><figcaption>What-if on the average restaurant. It assumes food waste is 5% of cost of sales, which is my assumption. It is a scenario, not a forecast.</figcaption></figure>
+
+<h2>The what-if</h2>
+<p>I tested three levers on that average restaurant: labour cost down 10%, overhead down 15%, and food waste down 20%. In the headline case they move profit from $21,500 to $68,169 (margin 8.0%).</p>
+<figure><img src="scenario_waterfall.png" width="1050" height="630" alt="Waterfall chart: profit before $21,500, labour plus $20,020, overhead plus $22,845, waste plus $3,804, profit after $68,169."><figcaption>Headline case. It assumes food waste is 5% of cost of sales, which is my assumption. It is a scenario, not a forecast.</figcaption></figure>
+<p class="note">The overhead gain is partly built on a calculated line ("other expenses", $130,800), which is not a published figure. If I only cut the published utilities and telecom line, profit goes from $21,500 to $48,549 (margin 5.7%). That is the number I would defend first.</p>
+<figure><img src="lever_per_point.png" width="1050" height="510" alt="Bar chart: a 1% cut to cost of sales adds $3,804 of profit, labour $2,002, overhead $1,523."><figcaption>A 1% cut to cost of sales is worth almost twice a 1% cut to labour.</figcaption></figure>
 
 <h2>How I built it</h2>
 <ul>
 <li>I typed the figures from public Statistics Canada and ISED releases (2019 to 2024) into CSV files and an Excel workbook.</li>
 <li>A Python script (pandas and matplotlib) rebuilds every chart from those files, and a second script builds the dashboard page.</li>
-<li>Six SQL queries on the same data (growth with window functions, cost shares, the what-if) are in the <code>sql</code> folder, with their results.</li>
+<li>Eight SQL queries on the same data (growth with window functions, cost shares, the what-if) are in the <code>sql</code> folder, with their results.</li>
+<li>A script called <code>checks.py</code> recomputes the headline numbers from the CSV files and fails if the README, the dashboard, the SQL results or the workbook disagree. GitHub runs it on every push.</li>
 <li>I built it with Claude Code. I picked the question, the sources and the three levers, and re-checked the figures against the Statistics Canada releases.</li>
-<li>Two sources use different bases: ISED reports net profit (2.5%) and Statistics Canada reports operating profit (4.1%). I only compare numbers from the same source.</li>
+<li>The two sources use different bases: ISED reports net profit (2.5%) and Statistics Canada reports operating profit (4.1%). I only compare numbers from the same source.</li>
 </ul>
 
 <h2>Why I picked restaurants</h2>
 <p>I co-founded and ran a restaurant for three years, from May 2020 to June 2023. Net profit grew 35% after inflation (year 3 compared with year 1), and I then led the sale of the business. This project checks those ideas against public data.</p>
 <p class="note">Limits: averages hide big gaps between restaurants (the bottom quarter lost $13,000 on average, the top quarter made $90,600), and some 2019 and 2022 figures come from later releases.</p>
 </main>
-<footer><div class="wrap">Contains information licensed under the Open Government Licence - Canada.</div></footer>
+<footer><div class="wrap">Contains information licensed under the Open Government Licence - Canada. Font: Geist (SIL Open Font License).</div></footer>
 </body></html>

@@ -5,7 +5,7 @@
 2. Typed each value into CSV files with a source column (`data/`) and into the workbook (blue cells = typed inputs, black = formulas).
 3. Checked growth rates against the releases' own statements (for example, 2020 revenue -25.5% vs 2019; 2022 revenue +7.4% vs 2019).
 4. Built a scenario that applies labour, overhead and waste cuts to the average restaurant and solves for the cut that would give +35% profit.
-5. Rebuilt all charts from the CSVs with `analysis/build_charts.py`, the dashboard with `analysis/build_dashboard.py`, and ran 6 SQL queries (`sql/`) on the same data.
+5. Rebuilt all charts from the CSVs with `analysis/build_charts.py`, the dashboard with `analysis/build_dashboard.py`, and ran 8 SQL queries (`sql/`) on the same data.
 6. Re-checked the 2020 to 2024 figures against the Statistics Canada releases (October 2026). The 2019 limited-service margin could not be confirmed, so it is left blank.
 7. Added a conservative case that leaves out the calculated "other expenses" line, a per-1% lever table and a waste-share range (`analysis/build_scenarios.py`).
 8. Added `checks.py`, which recomputes every headline number from the CSVs and compares it with the README, the dashboard, the SQL results and the workbook inputs. It runs on every push.
