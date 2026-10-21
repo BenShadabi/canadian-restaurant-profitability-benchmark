@@ -43,6 +43,44 @@ rank_density = [[r.neighbourhood, float(r.per_1000_residents), int(r.active_lice
 rank_exit_lo = [[r.neighbourhood, float(r.exit_rate_3yr), int(r.live_at_2023_01_01)] for r in rank.sort_values("exit_rate_3yr").head(6).itertuples()]
 rank_exit_hi = [[r.neighbourhood, float(r.exit_rate_3yr), int(r.live_at_2023_01_01)] for r in rank.sort_values("exit_rate_3yr", ascending=False).head(6).itertuples()]
 
+
+# ---------- construction section (data/toronto_construction.csv) ----------
+cx = pd.read_csv("data/toronto_construction.csv").set_index("analysis")
+main_r = cx.iloc[0]; r20 = cx.loc["Larger sites only ($20M+), within 150 m"]; plc = cx.loc["Placebo: sites finished 2017-2021, within 150 m"]
+dose3 = cx.loc["Dose: 3 or more active large sites within 150 m"]
+pp = lambda v: f"{v * 100:+.1f}"
+def forest():
+    items = [("Large site ($5M+) under way 2023 to 2025, within 150 m", main_r, "var(--link)"), ("Larger sites only ($20M+)", r20, "var(--link)"),
+             ("3 or more large sites under way nearby", dose3, "var(--link)"), ("Placebo: sites finished in 2017 to 2021", plc, "var(--gold)")]
+    lo, hi, W_, L = -4.0, 14.0, 760, 10
+    x = lambda v: L + (v - lo) / (hi - lo) * (W_ - L - 20)
+    out = [f'<svg style="width:100%;height:auto" viewBox="0 0 {W_} {40 + 46 * len(items)}" role="img" aria-label="Estimated difference in licence closure share, in percentage points, with 95% ranges, for four comparisons.">']
+    for t in (-4, 0, 4, 8, 12):
+        out.append(f'<line x1="{x(t):.0f}" x2="{x(t):.0f}" y1="14" y2="{22 + 46 * len(items)}" stroke="var(--grid)" stroke-width="{2 if t == 0 else 1}"/><text x="{x(t):.0f}" y="{38 + 46 * len(items)}" text-anchor="middle" font-size="12" fill="var(--muted)">{t:+d}</text>')
+    for i, (name, r, col) in enumerate(items):
+        y = 40 + 46 * i
+        out.append(f'<text x="0" y="{y - 12}" font-size="13" fill="var(--ink)">{html.escape(name)}</text>'
+                   f'<line x1="{x(r.ci_low * 100):.1f}" x2="{x(r.ci_high * 100):.1f}" y1="{y}" y2="{y}" stroke="{col}" stroke-width="3" stroke-linecap="round"/>'
+                   f'<circle cx="{x(r.adjusted_difference * 100):.1f}" cy="{y}" r="6" fill="{col}"/>')
+    return "".join(out) + "</svg>"
+construction = f"""<h2 class="rv" id="construction">Do closures go with construction nearby?</h2>
+<p class="sub rv">An exploratory check, and the answer is "not clearly". I took the {n(main_r.licences_exposed + main_r.licences_unexposed)} restaurant and bar licences that were live on 1 January 2023 and could be placed from a street address, and asked whether the ones within 150 m of a large construction site were more likely to end by the end of 2025. A large site is a City building permit with an estimated cost of $5 million or more ({n(main_r.sites)} sites under way at some point in 2023 to 2025).</p>
+<div class="card rv" style="padding:20px">
+<div class="cols" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+<div><b style="font-size:1.6rem">{main_r.rate_exposed:.1%}</b><br><span class="sub">of licences near a large site ended ({n(main_r.licences_exposed)} licences)</span></div>
+<div><b style="font-size:1.6rem">{main_r.rate_unexposed:.1%}</b><br><span class="sub">of other licences ended ({n(main_r.licences_unexposed)} licences)</span></div>
+<div><b style="font-size:1.6rem">{pp(main_r.adjusted_difference)} points</b><br><span class="sub">gap after comparing within each neighbourhood (95% range {pp(main_r.ci_low)} to {pp(main_r.ci_high)})</span></div></div>
+<h3 style="font:700 1rem var(--sans);margin:22px 0 4px">Gap in the share of licences that ended, in percentage points</h3>
+{forest()}
+<p class="sub" style="font-size:.875rem;margin:6px 0 0">Dot = estimate, line = 95% range from resampling neighbourhoods. A line that crosses zero means the data cannot rule out no difference.</p></div>
+<div class="limits rv" style="margin-top:16px">
+<div class="card"><b>What it can show</b><p>Licences near large construction sites ended more often than other licences in the same neighbourhood: {pp(main_r.adjusted_difference)} points, a bit larger for the biggest sites ({pp(r20.adjusted_difference)}) and for 3 or more sites nearby ({pp(dose3.adjusted_difference)}, but only {n(dose3.neighbourhoods_compared)} neighbourhoods have both groups).</p></div>
+<div class="card"><b>What it cannot show</b><p>That construction caused closures. The placebo comparison, sites that were already finished before 2022, shows a gap of {pp(plc.adjusted_difference)} points, as large as or larger than the main one. So the gap looks like a feature of the places (busy, redeveloping, higher rents), not of the dust and noise in 2023 to 2025.</p></div>
+<div class="card"><b>What it misses</b><p>Metrolinx transit works (the Eglinton Crosstown, Ontario Line and Finch West LRT) are not in City building permits, so the construction people worry about most is not in this test. It also cannot see rent rises, ownership changes or why a licence was cancelled.</p></div>
+</div>
+<p class="sub rv" style="margin-top:12px">Method and files: <code>analysis/build_toronto_construction.py</code> and <code>data/toronto_construction.csv</code> (building permits, address points, licences). Sites are located by the City's address point for each permit. A permit's end date is when the City closed the file, which can be later than the real end of building work, so "under way" is generous. The placebo and main groups overlap (a licence can be near both kinds of site), which blurs the comparison a little.</p>
+"""
+
 TEMPLATE = r"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark">
 <title>Toronto restaurants by neighbourhood | Ben Shadabi</title>
@@ -151,6 +189,7 @@ footer{color:var(--muted);font-size:.875rem;padding:30px 0 48px}
 <details class="card rv"><summary>Show the full table (sort by any column)</summary>
 <div class="scroll"><table id="tbl"><thead><tr><th><button data-k="n">Neighbourhood</button></th><th><button data-k="p">Residents</button></th><th><button data-k="a">Licences</button></th><th><button data-k="d">Per 1,000</button></th><th><button data-k="r">Ended 2023 to 2025</button></th></tr></thead><tbody></tbody></table></div></details>
 
+%%CONSTRUCTION%%
 <h2 class="rv">Limits</h2>
 <div class="limits rv">
 <div class="card"><b>Not profit.</b><p>There is no income, rent or cost data here. The 2.5% net margin on the main page is a national average and is not split by area.</p></div>
@@ -163,7 +202,7 @@ footer{color:var(--muted);font-size:.875rem;padding:30px 0 48px}
 
 <h2 class="rv">How I built it</h2>
 <ul class="rv">
-<li>Python (pandas, shapely, matplotlib) reads City of Toronto datasets and writes small CSVs to the <code>data</code> folder: <code>toronto_neighbourhoods.csv</code>, <code>toronto_bia.csv</code> and <code>toronto_match_summary.csv</code>. The raw files are about 80 MB and are downloaded by a script rather than stored.</li>
+<li>Python (pandas, shapely, matplotlib) reads City of Toronto datasets and writes small CSVs to the <code>data</code> folder (<code>toronto_neighbourhoods.csv</code>, <code>toronto_bia.csv</code>, <code>toronto_match_summary.csv</code> and <code>toronto_construction.csv</code>). The raw files are about 450 MB and are downloaded by a script rather than stored.</li>
 <li>Licences come from the Municipal Licensing and Standards business licences file (snapshot taken 21 October 2026). Coordinates come from DineSafe. Boundaries are the City's 158 neighbourhoods and its BIAs. Population is the 2021 Neighbourhood Profiles.</li>
 <li>This page is plain HTML, CSS and a little JavaScript, with the map drawn as inline SVG. The code is <code>analysis/toronto_download.py</code>, <code>build_toronto.py</code>, <code>build_toronto_charts.py</code> and <code>build_toronto_page.py</code>, and <code>checks.py</code> checks that the numbers on this page match the CSVs.</li>
 </ul>
@@ -239,7 +278,7 @@ repl = {"PLACED": str(placed_active), "PLACED_FMT": n(placed_active), "ACTIVE_AL
         "TOP_D_NAME": e(top_d.neighbourhood), "TOP_D_VAL": f"{top_d.per_1000_residents:.1f}", "NRANK": str(len(rank)),
         "LO_VAL": f"{lo_x.exit_rate_3yr:.1%}", "LO_NAME": e(lo_x.neighbourhood), "HI_VAL": f"{hi_x.exit_rate_3yr:.1%}", "HI_NAME": e(hi_x.neighbourhood),
         "ADDR": n(ms["address_match"]), "SCOPE": n(ms["licences_in_scope"]), "POSTAL": n(ms["postal_code_centre"]), "NOTPLACED": n(ms["not_placed"]), "NLOW": str(int(nb.low_sample.sum())),
-        "DATA": json.dumps(data, separators=(",", ":")), "RD": json.dumps(rank_density), "RLO": json.dumps(rank_exit_lo), "RHI": json.dumps(rank_exit_hi)}
+        "CONSTRUCTION": construction, "DATA": json.dumps(data, separators=(",", ":")), "RD": json.dumps(rank_density), "RLO": json.dumps(rank_exit_lo), "RHI": json.dumps(rank_exit_hi)}
 page = TEMPLATE
 for key, val in repl.items(): page = page.replace(f"%%{key}%%", val)
 assert "%%" not in page and "—" not in page

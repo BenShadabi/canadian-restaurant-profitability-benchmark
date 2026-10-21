@@ -201,6 +201,19 @@ check("stress page: baseline cushion is a 5.3% fall in sales", round(-shock()[3]
 check("stress page says it is a what-if and lists what was reported", "not a forecast" in stress and "What has actually been reported" in stress and "stress.html" in read("docs/motion.js"))
 check("stress page, README link each other and the nav", "stress.html" in readme and "index.html" in stress)
 
+# ---------- 9. construction and closures (exploratory) ----------
+cx = pd.read_csv("data/toronto_construction.csv")
+check("construction file: rates equal exits / licences and 95% ranges contain the estimate",
+      ((cx.exits_exposed / cx.licences_exposed).round(4) == cx.rate_exposed).all() and ((cx.exits_unexposed / cx.licences_unexposed).round(4) == cx.rate_unexposed).all()
+      and ((cx.ci_low <= cx.adjusted_difference) & (cx.adjusted_difference <= cx.ci_high)).all())
+check("construction file: main comparison uses all 5,936 licences and has a placebo row",
+      int(cx.iloc[0].licences_exposed + cx.iloc[0].licences_unexposed) == 5936 and cx.analysis.str.startswith("Placebo").any())
+plc_row = cx[cx.analysis.str.startswith("Placebo")].iloc[0]
+check("placebo gap is at least as large as the main gap, so the page must not claim construction caused closures",
+      plc_row.adjusted_difference >= cx.iloc[0].adjusted_difference and "cannot show" in tor.lower() and "That construction caused closures" in tor)
+check("Toronto page shows the construction numbers", f"{cx.iloc[0].rate_exposed:.1%}" in tor and f"{cx.iloc[0].rate_unexposed:.1%}" in tor and f"{cx.iloc[0].adjusted_difference * 100:+.1f}" in tor)
+check("Toronto page says Metrolinx transit works are not covered", "Metrolinx" in tor and "not in City building permits" in tor)
+
 # ---------- result ----------
 failed = [n for n, ok in results if not ok]
 print(f"\n{len(results) - len(failed)} of {len(results)} checks passed")

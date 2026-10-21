@@ -126,6 +126,6 @@ summary = [("licences_in_scope", n_all, "eating or drinking licences active on t
            ("exits_2023_2025", int(placed["exit"].sum()), "of those, cancellations with no new licence at the same address and unit within 90 days"),
            ("active_total_all_toronto", int(active.sum()), "active licences, including any not placed")]
 pd.DataFrame(summary, columns=["item", "count", "meaning"]).to_csv("data/toronto_match_summary.csv", index=False)
-placed[["lat", "lon"]].to_csv(RAW + "placed_points.csv", index=False)  # raw folder only, used by the charts
+placed[["Licence No.", "lat", "lon", "how", "area_code", "active", "live_2023", "exit", "issued", "cancel"]].to_csv(RAW + "placed_licences.csv", index=False)  # raw folder only, used by build_toronto_construction.py
 print(pd.DataFrame(summary, columns=["item", "count", "meaning"]).iloc[:, :2].to_string(index=False))
 print(per_nb.sort_values("per_1000_residents", ascending=False).head(5).to_string(index=False))

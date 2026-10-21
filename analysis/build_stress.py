@@ -89,7 +89,7 @@ ul{padding-left:1.2em}footer{color:var(--muted);font-size:.875rem;padding:26px 0
 <li><b>Closures.</b> A Dalhousie University food analytics lab estimates a net loss of about 7,000 restaurant establishments in Canada in 2025, with about 4,000 more in 2026. <small>An estimate based on "active, viable" restaurants, so it differs from official counts.</small></li>
 <li><b>Construction.</b> In 2020 two Toronto councillors counted 140 business closures along the Eglinton Crosstown LRT route between Black Creek Drive and Yonge Street, and Metrolinx said it did not compensate for lost business. <small>A councillors' count from news coverage at the time, not an audited figure, and it covers all business types.</small></li>
 </ul>
-<p>The <a href="toronto.html">Toronto map</a> shows where restaurant licences ended from 2023 to 2025. It does not show why they ended, so it cannot tell construction from rent or inflation.</p>
+<p>The <a href="toronto.html">Toronto map</a> shows where restaurant licences ended from 2023 to 2025, and an <a href="toronto.html#construction">exploratory check</a> found that licences near large construction sites ended more often, but about as much near sites that had already finished, so it cannot tell construction from rent, inflation or the kind of neighbourhood.</p>
 
 <h2>How the model works</h2>
 <ul>

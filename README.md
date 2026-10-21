@@ -63,7 +63,7 @@ Statistics Canada has not published 2025 margins or cost shares yet, so the prof
 
 ![Toronto maps: restaurants per 1,000 residents and licence closure share](assets/toronto_map.png)
 
-It counts licences. It does not estimate profit, because no public source reports profit for a neighbourhood. A cancelled licence is also not always a closed restaurant, and licences are placed by matching addresses, which is approximate. The page lists these limits. The raw files (about 80 MB) are downloaded by `analysis/toronto_download.py` and not stored here, and `data/toronto_*.csv` hold the results.
+An exploratory section asks whether licences near large construction sites ended more often. They did (12.7% against 9.1%), but about as much near sites that had already finished, so the data cannot show that construction caused closures, and Metrolinx transit works are not in the City permit data. It counts licences. It does not estimate profit, because no public source reports profit for a neighbourhood. A cancelled licence is also not always a closed restaurant, and licences are placed by matching addresses, which is approximate. The page lists these limits. The raw files (about 450 MB) are downloaded by `analysis/toronto_download.py` and not stored here, and `data/toronto_*.csv` hold the results.
 
 ## Data
 | Dataset | Source | Years |

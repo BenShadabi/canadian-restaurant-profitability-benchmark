@@ -1,0 +1,8 @@
+analysis,radius_m,sites,licences_exposed,exits_exposed,rate_exposed,licences_unexposed,exits_unexposed,rate_unexposed,adjusted_difference,ci_low,ci_high,neighbourhoods_compared
+"Large site ($5M+) active 2023-2025, within 150 m",150,888,2030,257,0.1266,3906,354,0.0906,0.0204,-0.0005,0.0405,121
+"Same, within 75 m",75,888,920,124,0.1348,5016,487,0.0971,0.0144,-0.0154,0.0387,87
+"Same, within 300 m",300,888,3415,388,0.1136,2521,223,0.0885,0.0112,-0.0055,0.0287,128
+"Larger sites only ($20M+), within 150 m",150,353,1250,175,0.14,4686,436,0.093,0.0329,0.007,0.0565,83
+"Placebo: sites finished 2017-2021, within 150 m",150,226,920,130,0.1413,5016,481,0.0959,0.0366,0.0061,0.0661,65
+Dose: 1 to 2 active large sites within 150 m,150,888,1568,185,0.118,3906,354,0.0906,0.0175,-0.0009,0.037,119
+Dose: 3 or more active large sites within 150 m,150,888,462,72,0.1558,3906,354,0.0906,0.0641,-0.0155,0.1195,22

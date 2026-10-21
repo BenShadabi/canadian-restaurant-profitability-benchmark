@@ -1,4 +1,4 @@
-"""Download the City of Toronto open data used by build_toronto.py into data/toronto_raw/ (not committed: about 100 MB).
+"""Download the City of Toronto open data used by build_toronto.py into data/toronto_raw/ (not committed: about 450 MB).
 Sources: City of Toronto Open Data portal (https://open.toronto.ca). Run from the repo root:  python analysis/toronto_download.py
 """
 import json, os, urllib.request
@@ -10,6 +10,9 @@ WANT = [  # (package id, resource name, local file)
     ("neighbourhoods", "Neighbourhoods - 4326.geojson", "neighbourhoods.geojson"),
     ("neighbourhood-profiles", "neighbourhood-profiles-2021-158-model", "neighbourhood_profiles_2021.xlsx"),
     ("business-improvement-areas", "Business Improvement Areas Data - 4326.geojson", "bia.geojson"),
+    ("building-permits-cleared-permits", "Cleared Building Permits since 2017.csv", "building_permits_cleared.csv"),
+    ("building-permits-active-permits", "building-permits-active-permits.csv", "building_permits_active.csv"),
+    ("address-points-municipal-toronto-one-address-repository", "Address Points - 4326.csv", "address_points.csv"),
 ]
 
 os.makedirs("data/toronto_raw", exist_ok=True)
