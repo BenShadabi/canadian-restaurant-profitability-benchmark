@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark">
+<title>Compare your restaurant to the benchmark | Ben Shadabi</title>
+<meta name="description" content="Type in your restaurant's yearly numbers and see how each cost line compares with the average Canadian restaurant (ISED, 2024). Runs in your browser; nothing is sent anywhere.">
+<style>
+@font-face{font-family:Geist;src:url(fonts/geist-latin-wght.woff2) format("woff2");font-weight:100 900;font-display:swap}
+:root{color-scheme:light dark;--ink:#0F1B2D;--muted:#4B5563;--grid:#D5DAE1;--bg:#F4F6F9;--card:#fff;--note:#FFF6E0;--gold:#B7791F;--link:#12355B;--bad:#B42318;--good:#1B7F4B;--r:10px;
+--sans:Geist,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+@media(prefers-color-scheme:dark){:root{--ink:#E8EEF6;--muted:#A7B4C6;--grid:#2A3750;--bg:#0A111F;--card:#111B2E;--note:#2A2412;--gold:#BF8420;--link:#9CC3F0;--bad:#F97066;--good:#4ADE80}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 var(--sans);font-variant-numeric:tabular-nums}
+.wrap{max-width:780px;margin:0 auto;padding:0 20px}
+header{background:#0E2745;color:#fff;border-bottom:4px solid #E3B965;padding:30px 0 26px}
+.eyebrow{font-size:.875rem;letter-spacing:.06em;text-transform:uppercase;color:#E3B965;font-weight:600;margin:0 0 8px}
+h1{font:650 clamp(1.6rem,5vw,2.3rem)/1.15 var(--sans);letter-spacing:-.02em;margin:0 0 10px}
+header p{margin:0;color:#C9D8EA}h2{font:650 1.25rem/1.3 var(--sans);margin:34px 0 10px}
+a{color:var(--link)}a:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.card{background:var(--card);border:1px solid var(--grid);border-radius:var(--r);padding:16px 18px;margin:16px 0}
+.inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px}
+label{display:block;font-size:.9375rem;color:var(--muted)}
+input{width:100%;min-height:46px;margin-top:4px;padding:0 12px;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--grid);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:.9375rem}th,td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--grid)}
+th:first-child,td:first-child{text-align:left}th{color:var(--muted);font-weight:600}
+.bad{color:var(--bad);font-weight:600}.good{color:var(--good);font-weight:600}
+.big{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.big div{border-top:3px solid var(--gold);background:var(--bg);border-radius:8px;padding:10px 12px}
+.big b{display:block;font:650 1.4rem/1.15 var(--sans)}.big span{font-size:.875rem;color:var(--muted)}
+.note{background:var(--note);border-left:4px solid var(--gold);padding:10px 16px;font-size:.9375rem;border-radius:0 6px 6px 0}
+button{min-height:44px;padding:0 16px;font:inherit;font-weight:600;border-radius:8px;border:1px solid var(--link);background:transparent;color:var(--link);cursor:pointer}
+footer{color:var(--muted);font-size:.875rem;padding:24px 0 40px}
+@media(max-width:620px){.inputs,.big{grid-template-columns:1fr}}
+</style></head><body>
+<header><div class="wrap"><p class="eyebrow">Student project by Ben Shadabi · Business Analytics (BBA), George Brown College</p>
+<h1>Compare your restaurant to the benchmark</h1>
+<p>Enter one year of your numbers. The page works out your margin, compares every cost line with the average Canadian restaurant, and shows what a 1% cut is worth to you. It runs in your browser and sends nothing anywhere.</p></div></header>
+<main class="wrap">
+<div class="card"><div class="inputs">
+<label>Revenue ($ per year)<input id="rev" type="number" inputmode="decimal" min="0" step="1000"></label>
+<label>Cost of sales: food, drink, packaging ($)<input id="cos" type="number" inputmode="decimal" min="0" step="1000"></label>
+<label>Labour and commissions ($)<input id="lab" type="number" inputmode="decimal" min="0" step="1000"></label>
+<label>Rent ($)<input id="rent" type="number" inputmode="decimal" min="0" step="1000"></label>
+<label>Utilities and telecom ($)<input id="util" type="number" inputmode="decimal" min="0" step="500"></label>
+<label>Amortization ($)<input id="amort" type="number" inputmode="decimal" min="0" step="500"></label>
+<label>All other expenses ($): insurance, marketing, fees, repairs, etc.<input id="other" type="number" inputmode="decimal" min="0" step="1000"></label>
+<div style="display:flex;align-items:end"><button id="reset" type="button">Reset to the benchmark average</button></div>
+</div></div>
+
+<div class="card"><div class="big" aria-live="polite">
+<div><b id="o-profit">-</b><span>your net profit</span></div>
+<div><b id="o-margin">-</b><span>your net margin (benchmark 2.5%)</span></div>
+<div><b id="o-be">-</b><span>break-even revenue</span></div></div>
+<p id="o-verdict" aria-live="polite"></p></div>
+
+<h2>Line by line</h2>
+<div class="card"><table><thead><tr><th>Line</th><th>You</th><th>Benchmark</th><th>Gap ($/yr)</th><th>Worth of a 1% cut</th></tr></thead><tbody id="rows"></tbody></table></div>
+<p class="note">Gap = what you would save (or lose) by spending the benchmark share of your revenue on that line. Red means you spend more than the average restaurant. A gap is a question to look into, not proof of waste: a full-service place with table staff should pay more labour than a counter-service one.</p>
+
+<h2>How it works</h2>
+<ul>
+<li>Benchmark shares come from the ISED Canadian Industry Statistics profile of NAICS 7225, 65,071 restaurants, 2024: cost of sales 44.8%, labour 23.6%, rent 8.4%, utilities 2.5%, amortization 2.7%, other 15.4% and net profit 2.5%. "Other" is a calculated line (revenue minus every listed cost and profit), so treat that row with care.</li>
+<li>Break-even revenue treats cost of sales as the only cost that moves with sales and every other cost as fixed: fixed costs divided by (1 minus cost of sales share). This is a simplification, since labour is partly variable.</li>
+<li>42.3% of restaurants in the same data lost money in 2024, and the bottom quarter averaged a $13,000 loss.</li>
+</ul>
+<p><a href="index.html">Back to the project page</a> · <a href="dashboard.html">Dashboard</a> · <a href="https://github.com/BenShadabi/canadian-restaurant-profitability-benchmark">Code and data</a></p>
+</main>
+<footer><div class="wrap">Contains information licensed under the Open Government Licence - Canada. Font: Geist (SIL Open Font License). This is a comparison tool, not financial advice.</div></footer>
+<script>
+// Average restaurant, ISED CIS NAICS 7225, 2024 (data/average_restaurant_2024.csv)
+const BENCH = {rev:849200, cos:380400, lab:200200, rent:71600, util:21500, amort:23200, profit:21500};
+BENCH.other = BENCH.rev - BENCH.cos - BENCH.lab - BENCH.rent - BENCH.util - BENCH.amort - BENCH.profit;
+const LINES = [["cos","Cost of sales"],["lab","Labour"],["rent","Rent"],["util","Utilities and telecom"],["amort","Amortization"],["other","All other expenses"]];
+const $ = id => document.getElementById(id);
+const money = v => (v < 0 ? "-$" : "$") + Math.abs(Math.round(v)).toLocaleString("en-CA");
+const pct = v => (v * 100).toFixed(1) + "%";
+const num = id => Math.max(0, parseFloat($(id).value) || 0);
+function fill() { for (const k of ["rev", ...LINES.map(l => l[0])]) $(k).value = Math.round(BENCH[k]); }
+function render() {
+  const rev = num("rev"), costs = LINES.map(([k]) => num(k)), total = costs.reduce((a, b) => a + b, 0);
+  const profit = rev - total;
+  $("o-profit").textContent = money(profit);
+  $("o-margin").textContent = rev ? pct(profit / rev) : "-";
+  const fixed = total - num("cos"), cosShare = rev ? num("cos") / rev : 0;
+  $("o-be").textContent = cosShare < 1 && rev ? money(fixed / (1 - cosShare)) : "-";
+  $("o-verdict").textContent = !rev ? "Enter your revenue to start."
+    : profit < 0 ? "You lost money this year, like 42.3% of restaurants in the benchmark data."
+    : profit / rev < BENCH.profit / BENCH.rev ? "You made a profit, but your margin is below the 2.5% benchmark average."
+    : "Your margin is at or above the 2.5% benchmark average.";
+  $("rows").innerHTML = LINES.map(([k, name], i) => {
+    const share = rev ? costs[i] / rev : 0, b = BENCH[k] / BENCH.rev, gap = costs[i] - b * rev;
+    const cls = rev ? (gap > 0 ? "bad" : "good") : "";
+    return `<tr><td>${name}</td><td>${rev ? pct(share) : "-"}</td><td>${pct(b)}</td><td class="${cls}">${rev ? money(gap) : "-"}</td><td>${money(costs[i] * 0.01)}</td></tr>`;
+  }).join("");
+}
+document.querySelectorAll("input").forEach(i => i.addEventListener("input", render));
+$("reset").addEventListener("click", () => { fill(); render(); });
+fill(); render();
+</script>
+</body></html>

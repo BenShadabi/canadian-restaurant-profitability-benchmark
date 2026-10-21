@@ -8,7 +8,7 @@
 
 I'm Ben Shadabi, a Business Analytics (BBA) student at George Brown College in Toronto. I built this with Claude Code. I co-founded and managed a dine-in and take-out restaurant for three years, so I know which numbers matter in this industry, and this project tests those ideas against public data. Every figure comes from the published releases linked in `docs/methodology.md`.
 
-[Project page](docs/index.html) and [dashboard](docs/dashboard.html). To open them, download the repo and open the files in a browser, or turn on GitHub Pages for the `/docs` folder. The dashboard has a dark mode and hover tooltips on the charts.
+[Project page](docs/index.html), [dashboard](docs/dashboard.html) and [calculator to compare your own restaurant](docs/calculator.html). To open them, download the repo and open the files in a browser, or turn on GitHub Pages for the `/docs` folder. The dashboard has a dark mode and hover tooltips on the charts.
 
 ![Dashboard](assets/dashboard_page.png)
 
@@ -39,6 +39,13 @@ Two things to know before you trust the headline number:
 
 A 1% cut to cost of sales is worth $3,804 a year, almost twice a 1% cut to labour ($2,002).
 
+## 2025 update (sales only)
+Statistics Canada has not published 2025 margins or cost shares yet, so the profit analysis stays at 2024. The monthly sales survey does cover 2025 (`data/sales_2025.csv`):
+- Food services and drinking places: $101.4B, up 5.6% on 2024.
+- Limited-service eating places: $47.3B (+5.9%). Full-service restaurants: $43.6B (+5.8%). Limited-service stayed ahead. Drinking places: -2.3%.
+- This is a different basis from the annual operating revenue above ($99.6B in 2024), so the two are not combined. Some of the growth is price: a tax break on restaurant food started on December 14, 2024.
+- I read these figures from the December 2025 release as reported (The Daily, 2026-02-25) while the Statistics Canada site was down, so re-check them against the release when it is back.
+
 ## Data
 | Dataset | Source | Years |
 |---|---|---|
@@ -60,6 +67,7 @@ data/
   scenario_cases.csv                   before, conservative and headline cases
   lever_per_point.csv                  profit gain from a 1% cut in each cost line
   waste_share_range.csv                profit for an assumed waste share of 2% to 8%
+  sales_2025.csv                       2025 sales by segment from the monthly survey (sales only, no margins yet)
 analysis/scenario.py                   the scenario maths, read from the CSVs
 analysis/build_scenarios.py            writes the three scenario CSVs and assets/lever_per_point.png
 analysis/add_scenario_rows.py          one-off helper that added the conservative rows to the workbook (keeps its charts)
@@ -71,6 +79,7 @@ checks.py                              recomputes every headline number and chec
 assets/                                title picture, dashboard and individual charts
 sql/queries.sql                        8 SQL queries on the same data (window functions, CTEs)
 sql/run_queries.py                     loads the CSVs into SQLite, runs the queries, writes sql/results.md
+docs/calculator.html                   compare your own restaurant's numbers with the benchmark (runs in the browser)
 docs/index.html, docs/dashboard.html   project page and dashboard (fonts/ holds the Geist font)
 docs/methodology.md                    definitions, sources, limitations
 requirements.txt                       pandas, matplotlib, tabulate, openpyxl

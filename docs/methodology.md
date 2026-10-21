@@ -29,6 +29,7 @@
 ## Sources
 - ISED, Canadian Industry Statistics, NAICS 7225 financial performance: https://ised-isde.canada.ca/app/ixb/cis/performance/rev/7225
 - ISED, Accommodation and food services (72), salaries and wages: https://ised-isde.canada.ca/app/ixb/cis/salaries-salaires/72
+- Statistics Canada, The Daily, food services and drinking places, December 2025 (2025 sales, monthly survey): https://www150.statcan.gc.ca/n1/daily-quotidien/260225/dq260225d-eng.htm
 - Statistics Canada, The Daily, annual 2024: https://www150.statcan.gc.ca/n1/daily-quotidien/260309/dq260309a-eng.htm
 - Statistics Canada, The Daily, 2023 financial data: https://www150.statcan.gc.ca/n1/daily-quotidien/250218/dq250218d-eng.htm
 - Statistics Canada, 2022 sales surpass pre-pandemic levels: https://www.statcan.gc.ca/o1/en/plus/5832-sales-full-service-restaurants-and-limited-service-eating-places-surpass-pre-pandemic
@@ -37,3 +38,6 @@
 
 ## Known limitations
 See the README. In short: segment revenue does not add up to the industry total, 2020 was later revised, averages, different bases between sources, approximations for 2019 and 2022, blank segment margins for 2023 and 2024, and the scenario is a what-if.
+
+## 2025 sales
+`data/sales_2025.csv` holds 2025 sales from the monthly Survey of Food Services and Drinking Places. It is not the same measure as the annual operating revenue in `industry_trend.csv`, so the two series are not mixed. The figures were read from the December 2025 release as reported by Retail Insider while statcan.gc.ca was unavailable, and should be re-checked against The Daily. No 2025 margins, cost shares or wages were found.

@@ -43,7 +43,7 @@ footer{color:var(--muted);font-size:.875rem;padding:24px 0 40px}
 <div><b>2.5%</b><span>net profit margin, average restaurant, 2024</span></div>
 <div><b>42.3%</b><span>of restaurants lost money</span></div>
 <div><b>$21,500 to $48,549</b><span>profit in my cautious what-if, margin 2.5% to 5.7%</span></div></div>
-<p><a class="btn" href="dashboard.html">Open the dashboard</a><a class="btn alt" href="https://github.com/BenShadabi/canadian-restaurant-profitability-benchmark">Code and data on GitHub</a></p>
+<p><a class="btn" href="dashboard.html">Open the dashboard</a><a class="btn alt" href="calculator.html">Compare your restaurant</a><a class="btn alt" href="https://github.com/BenShadabi/canadian-restaurant-profitability-benchmark">Code and data on GitHub</a></p>
 
 <h2>What I found</h2>
 <p>Cost of sales (44.8% of revenue) and labour (23.6%) take about 68 cents of each dollar. Rent is 8.4%. With so little profit left, a small cost change moves profit a lot.</p>
@@ -54,6 +54,10 @@ footer{color:var(--muted);font-size:.875rem;padding:24px 0 40px}
 <figure><img src="scenario_waterfall.png" width="1050" height="630" alt="Waterfall chart: profit before $21,500, labour plus $20,020, overhead plus $22,845, waste plus $3,804, profit after $68,169."><figcaption>Headline case. It assumes food waste is 5% of cost of sales, which is my assumption. It is a scenario, not a forecast.</figcaption></figure>
 <p class="note">The overhead gain is partly built on a calculated line ("other expenses", $130,800), which is not a published figure. If I only cut the published utilities and telecom line, profit goes from $21,500 to $48,549 (margin 5.7%). That is the number I would defend first.</p>
 <figure><img src="lever_per_point.png" width="1050" height="510" alt="Bar chart: a 1% cut to cost of sales adds $3,804 of profit, labour $2,002, overhead $1,523."><figcaption>A 1% cut to cost of sales is worth almost twice a 1% cut to labour.</figcaption></figure>
+
+<h2>2025 update: sales only</h2>
+<p>Statistics Canada has not published 2025 profit margins yet (the annual financial data usually comes about a year later), so I can only add sales. Food services and drinking places sold $101.4B in 2025, up 5.6%. Limited-service eating places reached $47.3B (up 5.9%) and full-service restaurants $43.6B (up 5.8%), so counter-service stayed ahead of full-service. Drinking places fell 2.3%.</p>
+<p class="note">These come from the monthly sales survey, a different basis from the annual operating revenue used above ($99.6B in 2024), so I do not chart them on the same line. Part of the 2025 growth is price: a tax break on restaurant food started on December 14, 2024. Sales growth also says nothing about profit.</p>
 
 <h2>How I built it</h2>
 <ul>

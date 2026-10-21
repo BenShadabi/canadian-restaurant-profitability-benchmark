@@ -131,6 +131,22 @@ check("workbook Industry_Trend equals the CSV" + (f" (differs: {', '.join(bad)})
 check("workbook Scenario inputs are 10%, 15%, 5% and 20%", [sc[c].value for c in ("B5", "B6", "B7", "B8")] == [0.10, 0.15, 0.05, 0.20])
 check("workbook has the conservative case formulas", sc["C28"].value == "=Benchmark!B9*B28" and sc["C30"].value == "=C11+C29")
 
+# ---------- 5. 2025 sales and the calculator page ----------
+s25 = pd.read_csv("data/sales_2025.csv").set_index("segment")
+tot, ls, fs = s25.loc["Food services and drinking places (total)"], s25.loc["Limited-service eating places"], s25.loc["Full-service restaurants"]
+check("2025 sales: $101.4B total (+5.6%), limited-service $47.3B, full-service $43.6B",
+      (tot.sales_2025_bn, tot.change_vs_2024_pct, ls.sales_2025_bn, fs.sales_2025_bn) == (101.4, 5.6, 47.3, 43.6))
+check("limited-service stayed ahead of full-service in 2025", ls.sales_2025_bn > fs.sales_2025_bn)
+for label, text in [("total", "$101.4B"), ("limited-service", "$47.3B"), ("full-service", "$43.6B")]:
+    check(f"README and project page state 2025 {label} sales", text in readme and text in page)
+calc = read("docs/calculator.html")
+check("calculator benchmark inputs equal the CSV",
+      f"rev:{rev}, cos:{cos}, lab:{lab}, rent:{rent}, util:{util}, amort:{amort}, profit:{profit}" in calc)
+check("calculator text states the benchmark shares",
+      all(t in calc for t in ["44.8%", "23.6%", "8.4%", "2.5%", "2.7%", "15.4%", "65,071", "42.3%"]))
+check("no em dashes in the calculator", "\u2014" not in calc)
+check("project page and README link the calculator", "calculator.html" in page and "calculator.html" in readme)
+
 # ---------- result ----------
 failed = [n for n, ok in results if not ok]
 print(f"\n{len(results) - len(failed)} of {len(results)} checks passed")
