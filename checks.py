@@ -179,6 +179,28 @@ check("shared motion.css and motion.js exist and every page loads them",
 check("no em dashes in motion.css or motion.js", "\u2014" not in read("docs/motion.css") + read("docs/motion.js"))
 check("Toronto page credits the Open Government Licence - Toronto", "Open Government Licence" in tor and "open.toronto.ca/open-data-licence" in tor)
 
+# ---------- 8. stress test page: recompute the preset table here without analysis/stress_model.py ----------
+stress = read("docs/stress.html")
+def shock(food=0, wage=0, rent_=0, other_=0, price=0, vol=0, flex=0.3):
+    other_base = rev - cos - lab - rent - profit
+    r = rev * (1 + price) * (1 + vol)
+    costs = cos * (1 + food) * (1 + vol) + lab * (1 + wage) * (1 + flex * vol) + rent * (1 + rent_) + other_base * (1 + other_)
+    p0 = rev * (1 + price) - cos * (1 + food) - lab * (1 + wage) - rent * (1 + rent_) - other_base * (1 + other_)
+    slope = rev * (1 + price) - cos * (1 + food) - lab * (1 + wage) * flex
+    return r - costs, (r - costs) / r, (profit + costs) / (rev * (1 + vol)) - 1, -p0 / slope
+dm = lambda v: ("-$" if v < 0 else "$") + f"{abs(v):,.0f}"
+cases = [dict(food=0.04, wage=0.023, rent_=0.03, other_=0.03, price=0.026), dict(wage=0.023), dict(vol=-0.20),
+         dict(food=0.08, wage=0.05, rent_=0.05, other_=0.05, price=0.03, vol=-0.05)]
+ok = True
+for cs in cases:
+    pr, mg, pn, bv = shock(**cs)
+    ok = ok and dm(pr) in stress and f"{mg:.1%}" in stress and f"{pn:+.1%}" in stress and f"{bv:+.1%}" in stress
+check("stress page preset table matches an independent recomputation", ok)
+check("stress page: construction preset (sales -20%) turns $21,500 into -$60,248", round(shock(vol=-0.20)[0]) == -60248)
+check("stress page: baseline cushion is a 5.3% fall in sales", round(-shock()[3] * 100, 1) == 5.3 and "5.3%" in stress)
+check("stress page says it is a what-if and lists what was reported", "not a forecast" in stress and "What has actually been reported" in stress and "stress.html" in read("docs/motion.js"))
+check("stress page, README link each other and the nav", "stress.html" in readme and "index.html" in stress)
+
 # ---------- result ----------
 failed = [n for n, ok in results if not ok]
 print(f"\n{len(results) - len(failed)} of {len(results)} checks passed")

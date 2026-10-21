@@ -55,6 +55,9 @@ Statistics Canada has not published 2025 margins or cost shares yet, so the prof
 - This is a different basis from the annual operating revenue above ($99.6B in 2024), so the two are not combined. Some of the growth is price: a tax break on restaurant food started on December 14, 2024.
 - I read these figures from the December 2025 release as reported (The Daily, 2026-02-25) while the Statistics Canada site was down, so re-check them against the release when it is back.
 
+## Stress test: inflation, wages, rent and falling sales
+[docs/stress.html](docs/stress.html) lets you move sliders for food costs, wages, rent, other costs, menu prices and sales volume and see what happens to the average restaurant's profit, with presets (a typical recent year, a minimum wage step, construction outside the door, everything at once). With a 2.5% margin, sales falling just 5.3% wipes out the average restaurant's profit. It is a what-if, not a forecast. The sources it cites (menu price inflation, Ontario minimum wage history, Restaurants Canada's 2025 survey, closure estimates) are listed on the page with notes on what I could not verify. The code is `analysis/stress_model.py` and `analysis/build_stress.py`.
+
 ## Toronto side project: restaurants by neighbourhood
 [docs/toronto.html](docs/toronto.html) is a separate analysis from the national profit work above. It uses City of Toronto open data (business licences, DineSafe, neighbourhood and BIA boundaries, 2021 census population) to show licensed restaurants and bars per 1,000 residents and the share of licences that ended from 2023 to 2025, for the 158 neighbourhoods and 86 business improvement areas.
 
@@ -100,6 +103,7 @@ sql/queries.sql                        8 SQL queries on the same data (window fu
 sql/run_queries.py                     loads the CSVs into SQLite, runs the queries, writes sql/results.md
 analysis/toronto_download.py, build_toronto.py, build_toronto_charts.py, build_toronto_page.py   the Toronto side project (see above)
 docs/toronto.html                      Toronto neighbourhood page
+docs/stress.html                       cost-shock simulator with sliders and presets
 docs/calculator.html                   compare your own restaurant's numbers with the benchmark (runs in the browser)
 docs/index.html, docs/dashboard.html   project page and dashboard (fonts/ holds the Geist font)
 docs/methodology.md                    definitions, sources, limitations

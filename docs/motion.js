@@ -3,7 +3,7 @@
 (function(){
   var reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
   var here=location.pathname.split("/").pop()||"index.html";
-  var links=[["index.html","Benchmark"],["dashboard.html","Dashboard"],["calculator.html","Compare yours"],["toronto.html","Toronto"]];
+  var links=[["index.html","Benchmark"],["dashboard.html","Dashboard"],["calculator.html","Compare yours"],["stress.html","Stress test"],["toronto.html","Toronto"]];
   var st=document.createElement("style");
   st.textContent="body{padding-top:48px}.sitenav{position:fixed;top:0;left:0;right:0;z-index:50;height:48px;background:rgba(11,32,56,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.12)}"+
     ".sitenav div{max-width:1040px;margin:0 auto;padding:0 12px;height:100%;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none}.sitenav b{color:#E3B965;font:650 .875rem/1 system-ui,sans-serif;letter-spacing:.04em;margin-right:auto;white-space:nowrap;padding:0 8px}"+
