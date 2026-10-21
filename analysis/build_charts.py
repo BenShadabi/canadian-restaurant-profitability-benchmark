@@ -15,6 +15,7 @@ plt.rcParams.update({"axes.axisbelow": True, "font.family": "DejaVu Sans", "axes
 ind = pd.read_csv("data/industry_trend.csv")
 avg = pd.read_csv("data/average_restaurant_2024.csv").set_index("line")["dollars"]
 wag = pd.read_csv("data/wages_food_services.csv")
+s25 = pd.read_csv("data/sales_2025.csv").set_index("segment")
 
 # ---- scenario maths (same as the Scenario tab in the workbook) ----
 rev, cos, lab, util = avg["revenue"], avg["cost_of_sales"], avg["labour_and_commissions"], avg["utilities_and_telecom"]
@@ -70,10 +71,23 @@ def wages(ax):
     for x, y in zip(wag.year, wag.avg_hourly_wage_cad): ax.text(x, y + 0.4, f"${y:.2f}", ha="center", fontsize=9, color=NAVY)
     ax.set_xticks(wag.year)
 
+def sales_2025(ax):
+    seg = [("Limited-service", "Limited-service eating places", GOLD), ("Full-service", "Full-service restaurants", NAVY)]
+    for i, (name, key, col) in enumerate(seg):
+        r = s25.loc[key]; prev = r.sales_2025_bn - r.increase_vs_2024_bn
+        ax.bar(i - 0.2, prev, 0.38, color=SLATE); ax.bar(i + 0.2, r.sales_2025_bn, 0.38, color=col)
+        ax.text(i - 0.2, prev + 0.8, f"\\${prev:.1f}B", ha="center", fontsize=9, color=NAVY)
+        ax.text(i + 0.2, r.sales_2025_bn + 0.8, f"\\${r.sales_2025_bn:.1f}B", ha="center", fontsize=9, color=NAVY)
+        ax.text(i, -6.5, f"{name} ({r.change_vs_2024_pct:+.1f}%)", ha="center", fontsize=9, color=GREY)
+    ax.set_xticks([-0.2, 0.2, 0.8, 1.2]); ax.set_xticklabels(["2024", "2025", "2024", "2025"], fontsize=9)
+    ax.set_title("2025 sales: \\$101.4B, up 5.6%; limited-service stayed ahead"); ax.set_ylim(0, 55); ax.grid(axis="y", color="#D5DAE1")
+
 panels = [("revenue_by_segment", line_segments), ("margin_by_segment", margin_seg), ("industry_margin", margin_all),
           ("cost_structure", structure), ("scenario_waterfall", waterfall), ("wages", wages)]
 for name, fn in panels:
     f, ax = plt.subplots(figsize=(7, 4.2), dpi=150); fn(ax); f.tight_layout(); f.savefig(f"assets/{name}.png"); plt.close(f)
+
+f, ax = plt.subplots(figsize=(7, 4.2), dpi=150); sales_2025(ax); f.tight_layout(); f.savefig("assets/sales_2025.png"); plt.close(f)
 
 fig, axes = plt.subplots(2, 3, figsize=(18, 9.6), dpi=140)
 for ax, (_, fn) in zip(axes.flat, panels): fn(ax)

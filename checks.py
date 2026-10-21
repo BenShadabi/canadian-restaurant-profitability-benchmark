@@ -144,6 +144,8 @@ check("calculator benchmark inputs equal the CSV",
       f"rev:{rev}, cos:{cos}, lab:{lab}, rent:{rent}, util:{util}, amort:{amort}, profit:{profit}" in calc)
 check("calculator text states the benchmark shares",
       all(t in calc for t in ["44.8%", "23.6%", "8.4%", "2.5%", "2.7%", "15.4%", "65,071", "42.3%"]))
+check("dashboard shows the 2025 sales card", all(t in dash for t in ["$101.4B", "$47.3B", "$43.6B", "$44.7B", "$41.2B"]))
+check("README embeds the 2025 chart and the calculator picture", "assets/sales_2025.png" in readme and "assets/calculator.png" in readme)
 check("no em dashes in the calculator", "\u2014" not in calc)
 check("project page and README link the calculator", "calculator.html" in page and "calculator.html" in readme)
 

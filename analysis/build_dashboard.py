@@ -18,6 +18,9 @@ avg = pd.read_csv("data/average_restaurant_2024.csv").set_index("line")["dollars
 wag = pd.read_csv("data/wages_food_services.csv")
 cnt = pd.read_csv("data/restaurant_counts_2024.csv").set_index("metric")["value"]
 LOSS_SHARE, N_BUS = cnt["loss_making_share"], int(cnt["businesses"])
+s25 = pd.read_csv("data/sales_2025.csv").set_index("segment")
+LS25, FS25 = s25.loc["Limited-service eating places"], s25.loc["Full-service restaurants"]
+TOT25 = s25.loc["Food services and drinking places (total)"]
 
 # ---------- numbers (same maths as analysis/build_charts.py and the workbook Scenario tab) ----------
 rev, cos, lab, util = avg["revenue"], avg["cost_of_sales"], avg["labour_and_commissions"], avg["utilities_and_telecom"]
@@ -112,6 +115,28 @@ def wages_svg():
                  f'<text x="{x+bw/2:.1f}" y="{H-12}" text-anchor="middle" class="ax">{int(y)}</text>')
         tip = [str(int(y)), f"${v:.2f} an hour"] + ([f"{(v / wag.avg_hourly_wage_cad.iloc[i-1] - 1) * 100:+.1f}% on {int(y)-1}"] if i else [])
         s.append(f'<rect class="hit" x="{x-4:.1f}" y="{top}" width="{bw+8}" height="{bot-top}" data-tip="{e("|".join(tip))}"/>')
+    return "".join(s) + "</svg>"
+
+
+# 3. 2025 sales by segment (monthly survey, sales only); 2024 = 2025 less the stated dollar increase
+def sales25_svg():
+    top, bot = 30, H - 36
+    ymax = 50; ypx = lambda v: top + (bot - top) * (1 - v / ymax)
+    groups = [("Limited-service", LS25.sales_2025_bn - LS25.increase_vs_2024_bn, LS25.sales_2025_bn, LS25.change_vs_2024_pct),
+              ("Full-service", FS25.sales_2025_bn - FS25.increase_vs_2024_bn, FS25.sales_2025_bn, FS25.change_vs_2024_pct)]
+    s = [svg_open("Sales by segment, 2024 and 2025",
+                  "; ".join(f"{n}: {a:.1f} billion dollars in 2024, {b:.1f} in 2025, up {g:.1f}%" for n, a, b, g in groups) + ". Axis starts at zero.", "s25"),
+         f'<line x1="8" x2="{W-8}" y1="{bot}" y2="{bot}" stroke="{MUTED}"/>']
+    bw, gw = 78, 170
+    for i, (n, a, b, g) in enumerate(groups):
+        x0 = 40 + i * (gw + 30)
+        for j, (v, col, yr) in enumerate([(a, SLATE, 2024), (b, NAVY if i == 1 else GOLD, 2025)]):
+            x = x0 + j * (bw + 6)
+            s.append(f'<rect x="{x}" y="{ypx(v):.1f}" width="{bw}" height="{bot-ypx(v):.1f}" fill="{col}"/>'
+                     f'<text x="{x+bw/2}" y="{ypx(v)-7:.1f}" text-anchor="middle" class="lb" fill="{INK}">${v:.1f}B</text>'
+                     f'<text x="{x+bw/2}" y="{bot+16}" text-anchor="middle" class="ax">{yr}</text>'
+                     f'<rect class="hit" x="{x-2}" y="{top}" width="{bw+4}" height="{bot-top}" data-tip="{e(n + " " + str(yr) + "|$" + f"{v:.1f}" + "B")}"/>')
+        s.append(f'<text x="{x0+bw+3}" y="{H-4}" text-anchor="middle" class="ax">{n} ({g:+.1f}%)</text>')
     return "".join(s) + "</svg>"
 
 pct = lambda v, lab=False: (f"{v:.1f}%" if lab else f"{v:g}%")
@@ -270,7 +295,7 @@ document.addEventListener('scroll',hide,{passive:true});})();
 tot = sum(v for _, v in strip_parts)
 strip_html = "".join(f'<i class="{k}" style="width:{v / tot * 100:.2f}%"></i>' for (k, _), (_, v) in zip(strip_meta, strip_parts))
 legend_html = "".join(f'<li><span class="{k}"></span>{n} <b>{v / rev * 100:.1f}¢</b></li>' for (k, n), (_, v) in zip(strip_meta, strip_parts))
-nav = [("h-wf", "What-if"), ("h-cases", "Conservative case"), ("h-cost", "Cost lines"), ("h-sm", "Segments"), ("h-wg", "Wages"), ("data", "Data tables")]
+nav = [("h-wf", "What-if"), ("h-cases", "Conservative case"), ("h-cost", "Cost lines"), ("h-sm", "Segments"), ("h-s25", "2025 sales"), ("h-wg", "Wages"), ("data", "Data tables")]
 nav_html = "".join(f'<a href="#{i}">{t}</a>' for i, t in nav)
 
 page = f"""<!doctype html>
@@ -309,6 +334,8 @@ page = f"""<!doctype html>
 <section class="card" aria-labelledby="h-sr"><h2 id="h-sr">Limited-service revenue was ahead of full-service in 2020, 2021 and 2024 ({bn(ind.limited_service_revenue_bn.iloc[-1],True)} vs {bn(ind.full_service_revenue_bn.iloc[-1],True)})</h2>
 <p class="sub">Revenue by segment, $ billion, 2019 to 2024 (Statistics Canada).</p>{svg_seg_rev}
 <ul class="key"><li><span style="border-color:{NAVY}"></span>Full-service</li><li><span style="border-color:{GOLD};border-top-style:dashed"></span>Limited-service</li></ul></section>
+<section class="card" aria-labelledby="h-s25"><h2 id="h-s25">2025 sales reached {bn(TOT25.sales_2025_bn,True)}, up {TOT25.change_vs_2024_pct:.1f}%, and limited-service stayed ahead ({bn(LS25.sales_2025_bn,True)} vs {bn(FS25.sales_2025_bn,True)})</h2>
+<p class="sub">Sales by segment, $ billion (Statistics Canada monthly survey). 2024 bars are 2025 less the published dollar increase. This is sales, not profit, on a different basis from the annual revenue above, and part of the growth is price (a tax break on restaurant food started December 14, 2024).</p>{sales25_svg()}</section>
 <section class="card" aria-labelledby="h-im"><h2 id="h-im">Industry operating margin stayed between {ind.operating_margin.min()*100:.1f}% and {ind.operating_margin.max()*100:.1f}%, and was {op24:.1f}% in 2024</h2>
 <p class="sub">All food services and drinking places (Statistics Canada). Operating margin, not net margin.</p>{svg_ind}</section>
 <section class="card" aria-labelledby="h-wg"><h2 id="h-wg">Average hourly pay in food services rose {wage_up:.1f}%, from ${w0:.2f} to ${w1:.2f}</h2>

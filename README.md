@@ -4,6 +4,8 @@
 
 ![The average Canadian restaurant keeps 2.5 cents of every dollar it sells](assets/banner.png)
 
+**[Open the dashboard](docs/dashboard.html)** · **[Compare your own restaurant](docs/calculator.html)** · [Project page](docs/index.html) · [Methodology](docs/methodology.md)
+
 **Business question:** where does a typical Canadian restaurant make and lose money, and how much would tighter labour, overhead and waste control change its profit?
 
 I'm Ben Shadabi, a Business Analytics (BBA) student at George Brown College in Toronto. I built this with Claude Code. I co-founded and managed a dine-in and take-out restaurant for three years, so I know which numbers matter in this industry, and this project tests those ideas against public data. Every figure comes from the published releases linked in `docs/methodology.md`.
@@ -39,7 +41,14 @@ Two things to know before you trust the headline number:
 
 A 1% cut to cost of sales is worth $3,804 a year, almost twice a 1% cut to labour ($2,002).
 
+## Try it: compare your own restaurant
+[docs/calculator.html](docs/calculator.html) takes one year of your numbers and compares each cost line with the benchmark, then shows your margin, break-even revenue and what a 1% cut is worth. It runs in the browser and sends nothing anywhere. The picture below is a made-up example restaurant that loses $18,000, mainly because labour is 31.4% of revenue against a 23.6% benchmark.
+
+![Calculator showing an example restaurant that loses $18,000](assets/calculator.png)
+
 ## 2025 update (sales only)
+![2025 sales by segment, 2024 vs 2025](assets/sales_2025.png)
+
 Statistics Canada has not published 2025 margins or cost shares yet, so the profit analysis stays at 2024. The monthly sales survey does cover 2025 (`data/sales_2025.csv`):
 - Food services and drinking places: $101.4B, up 5.6% on 2024.
 - Limited-service eating places: $47.3B (+5.9%). Full-service restaurants: $43.6B (+5.8%). Limited-service stayed ahead. Drinking places: -2.3%.
