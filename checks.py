@@ -149,6 +149,29 @@ check("README embeds the 2025 chart and the calculator picture", "assets/sales_2
 check("no em dashes in the calculator", "\u2014" not in calc)
 check("project page and README link the calculator", "calculator.html" in page and "calculator.html" in readme)
 
+# ---------- 6. Toronto side project (counts of licences, kept separate from the profit numbers above) ----------
+tn = pd.read_csv("data/toronto_neighbourhoods.csv", dtype={"area_code": str})
+tb = pd.read_csv("data/toronto_bia.csv")
+tm = pd.read_csv("data/toronto_match_summary.csv").set_index("item")["count"]
+check("Toronto: 158 neighbourhoods and 86 BIAs", len(tn) == 158 and len(tb) == 86 and tn.area_code.is_unique)
+check("Toronto: placement counts add up to the licences in scope", tm["address_match"] + tm["postal_code_centre"] + tm["not_placed"] == tm["licences_in_scope"])
+check("Toronto: nothing placed outside the neighbourhood boundaries", tm["outside_neighbourhoods"] == 0)
+check("Toronto: neighbourhood active licences equal the placed active licences", tn.active_licences.sum() <= tm["active_total_all_toronto"] and tn.active_licences.sum() >= 0.95 * tm["active_total_all_toronto"])
+check("Toronto: exits and live counts are consistent (exits <= live, rate = exits / live)",
+      (tn.exits_2023_2025 <= tn.live_at_2023_01_01).all() and (tn.exits_2023_2025.sum() == tm["exits_2023_2025"])
+      and ((tn.exits_2023_2025 / tn.live_at_2023_01_01.where(tn.live_at_2023_01_01 > 0)).round(4).fillna(0) == tn.exit_rate_3yr.fillna(0)).all())
+check("Toronto: removing re-issued addresses lowers the cancellation count", tm["exits_2023_2025"] < tm["raw_cancellations_2023_2025"])
+check("Toronto: per 1,000 residents is recomputed from the counts", ((tn.active_licences / tn.population_2021 * 1000).round(2) == tn.per_1000_residents).all())
+check("Toronto: closure shares are flagged as low sample below 50 licences", (tn.low_sample == (tn.live_at_2023_01_01 < 50)).all() and (tb.low_sample == (tb.live_at_2023_01_01 < 50)).all())
+tor = read("docs/toronto.html")
+tcity = tn.active_licences.sum() / tn.population_2021.sum() * 1000
+check("Toronto page shows the placed total, city density and closure share",
+      f"{int(tn.active_licences.sum()):,}" in tor and f"{tcity:.1f}" in tor and f"{tn.exits_2023_2025.sum() / tn.live_at_2023_01_01.sum():.1%}" in tor)
+check("Toronto page says it is not profit and lists its limits", "not profit" in tor.lower() and "<h2>Limits</h2>" in tor and "Not profit." in tor)
+check("Toronto page, README and project page link each other", "toronto.html" in readme and "toronto.html" in page and "index.html" in tor)
+check("no em dashes on the Toronto page", "\u2014" not in tor)
+check("the national profit numbers do not use Toronto data", "toronto" not in open("analysis/scenario.py", encoding="utf-8").read().lower())
+
 # ---------- result ----------
 failed = [n for n, ok in results if not ok]
 print(f"\n{len(results) - len(failed)} of {len(results)} checks passed")

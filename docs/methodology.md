@@ -41,3 +41,10 @@ See the README. In short: segment revenue does not add up to the industry total,
 
 ## 2025 sales
 `data/sales_2025.csv` holds 2025 sales from the monthly Survey of Food Services and Drinking Places. It is not the same measure as the annual operating revenue in `industry_trend.csv`, so the two series are not mixed. The figures were read from the December 2025 release as reported by Retail Insider while statcan.gc.ca was unavailable, and should be re-checked against The Daily. No 2025 margins, cost shares or wages were found.
+
+## Toronto neighbourhoods (side project)
+Separate from the profit analysis above. Sources, all City of Toronto Open Data (open.toronto.ca): Municipal Licensing and Standards business licences (category "Eating or Drinking Establishment"), DineSafe (used only for coordinates), Neighbourhoods and Business Improvement Areas boundaries, and the 2021 Neighbourhood Profiles (population). Snapshot downloaded 2026-10-21.
+- **Active** = issued on or before the snapshot and not cancelled. **Live on 2023-01-01** = issued before it and not cancelled before it. A **closure** = a live licence cancelled between 2023-01-01 and 2025-12-31 with no other licence at the same address and unit issued within 90 days of its cancel date.
+- **Placing:** the street address (units, punctuation and street-type spelling normalised) is matched to a DineSafe premises; otherwise the postal code's average DineSafe position is used. Unmatched licences are left out. Points are assigned to neighbourhoods and BIAs by point-in-polygon.
+- **Limits:** counts only, no profit; cancellations are not always closures; placement is approximate; one licence category only; 2021 population; closure shares are not shown below 50 licences.
+- The City's open data terms are assumed to be the Open Government Licence - Toronto; confirm on the portal before reuse.

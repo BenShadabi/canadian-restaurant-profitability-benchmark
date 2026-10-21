@@ -55,6 +55,13 @@ Statistics Canada has not published 2025 margins or cost shares yet, so the prof
 - This is a different basis from the annual operating revenue above ($99.6B in 2024), so the two are not combined. Some of the growth is price: a tax break on restaurant food started on December 14, 2024.
 - I read these figures from the December 2025 release as reported (The Daily, 2026-02-25) while the Statistics Canada site was down, so re-check them against the release when it is back.
 
+## Toronto side project: restaurants by neighbourhood
+[docs/toronto.html](docs/toronto.html) is a separate analysis from the national profit work above. It uses City of Toronto open data (business licences, DineSafe, neighbourhood and BIA boundaries, 2021 census population) to show licensed restaurants and bars per 1,000 residents and the share of licences that ended from 2023 to 2025, for the 158 neighbourhoods and 86 business improvement areas.
+
+![Toronto maps: restaurants per 1,000 residents and licence closure share](assets/toronto_map.png)
+
+It counts licences. It does not estimate profit, because no public source reports profit for a neighbourhood. A cancelled licence is also not always a closed restaurant, and licences are placed by matching addresses, which is approximate. The page lists these limits. The raw files (about 80 MB) are downloaded by `analysis/toronto_download.py` and not stored here, and `data/toronto_*.csv` hold the results.
+
 ## Data
 | Dataset | Source | Years |
 |---|---|---|
@@ -76,6 +83,9 @@ data/
   scenario_cases.csv                   before, conservative and headline cases
   lever_per_point.csv                  profit gain from a 1% cut in each cost line
   waste_share_range.csv                profit for an assumed waste share of 2% to 8%
+  toronto_neighbourhoods.csv           Toronto: licences per 1,000 residents and 2023-2025 licence exits, 158 neighbourhoods
+  toronto_bia.csv                      the same for 86 business improvement areas
+  toronto_match_summary.csv            how many licences were placed on the map, and how
   sales_2025.csv                       2025 sales by segment from the monthly survey (sales only, no margins yet)
 analysis/scenario.py                   the scenario maths, read from the CSVs
 analysis/build_scenarios.py            writes the three scenario CSVs and assets/lever_per_point.png
@@ -88,6 +98,8 @@ checks.py                              recomputes every headline number and chec
 assets/                                title picture, dashboard and individual charts
 sql/queries.sql                        8 SQL queries on the same data (window functions, CTEs)
 sql/run_queries.py                     loads the CSVs into SQLite, runs the queries, writes sql/results.md
+analysis/toronto_download.py, build_toronto.py, build_toronto_charts.py, build_toronto_page.py   the Toronto side project (see above)
+docs/toronto.html                      Toronto neighbourhood page
 docs/calculator.html                   compare your own restaurant's numbers with the benchmark (runs in the browser)
 docs/index.html, docs/dashboard.html   project page and dashboard (fonts/ holds the Geist font)
 docs/methodology.md                    definitions, sources, limitations
@@ -101,6 +113,7 @@ python analysis/build_charts.py
 python analysis/build_scenarios.py
 python analysis/build_dashboard.py
 python sql/run_queries.py
+python analysis/build_toronto.py   # optional: needs the Toronto download first (python analysis/toronto_download.py)
 python checks.py
 ```
 `checks.py` recomputes every headline number from the CSVs and fails if the README, the dashboard, the project page, the SQL results or the workbook inputs disagree with the data. To test other cuts, open the workbook and change the blue cells on the Scenario tab. The title picture is the one output that needs a browser, so it is not in the list above (`pip install playwright`, then `python analysis/build_banner.py`).

@@ -1,0 +1,159 @@
+area_code,neighbourhood,population_2021,active_licences,per_1000_residents,live_at_2023_01_01,exits_2023_2025,exit_rate_3yr,low_sample
+001,West Humber-Clairville,33300,174,5.23,148,14,0.0946,False
+002,Mount Olive-Silverstone-Jamestown,31345,31,0.99,24,1,0.0417,True
+003,Thistletown-Beaumond Heights,9850,24,2.44,22,4,0.1818,True
+004,Rexdale-Kipling,10375,18,1.73,17,2,0.1176,True
+005,Elms-Old Rexdale,9355,10,1.07,12,2,0.1667,True
+006,Kingsview Village-The Westway,22005,10,0.45,12,2,0.1667,True
+007,Willowridge-Martingrove-Richview,22445,14,0.62,13,2,0.1538,True
+008,Humber Heights-Westmount,10005,3,0.3,2,0,0.0,True
+009,Edenbridge-Humber Valley,15190,9,0.59,8,1,0.125,True
+010,Princess-Rosethorn,11170,4,0.36,3,0,0.0,True
+011,Eringate-Centennial-West Deane,18450,24,1.3,19,0,0.0,True
+012,Markland Wood,10365,12,1.16,11,1,0.0909,True
+013,Etobicoke West Mall,11865,6,0.51,5,0,0.0,True
+015,Kingsway South,8855,24,2.71,23,3,0.1304,True
+016,Stonegate-Queensway,25650,82,3.2,76,8,0.1053,False
+018,New Toronto,11345,38,3.35,38,3,0.0789,True
+019,Long Branch,11360,33,2.9,30,2,0.0667,True
+020,Alderwood,12595,24,1.91,20,2,0.1,True
+021,Humber Summit,12185,57,4.68,49,9,0.1837,True
+022,Humbermede,16955,25,1.47,22,1,0.0455,True
+023,Pelmo Park-Humberlea,11290,22,1.95,21,3,0.1429,True
+024,Black Creek,21145,13,0.61,13,2,0.1538,True
+025,Glenfield-Jane Heights,30020,35,1.17,35,5,0.1429,True
+027,York University Heights,28255,158,5.59,139,16,0.1151,False
+028,Rustic,9390,4,0.43,5,1,0.2,True
+029,Maple Leaf,9845,1,0.1,1,0,0.0,True
+030,Brookhaven-Amesbury,17495,37,2.11,35,2,0.0571,True
+031,Yorkdale-Glen Park,16625,88,5.29,88,12,0.1364,False
+032,Englemount-Lawrence,21285,14,0.66,14,2,0.1429,True
+033,Clanton Park,17620,36,2.04,32,2,0.0625,True
+034,Bathurst Manor,15955,24,1.5,22,3,0.1364,True
+035,Westminster-Branson,25705,7,0.27,6,0,0.0,True
+036,Newtonbrook West,23805,57,2.39,51,4,0.0784,False
+037,Willowdale West,17160,39,2.27,38,3,0.0789,True
+038,Lansing-Westgate,15910,40,2.51,37,5,0.1351,True
+039,Bedford Park-Nortown,22145,56,2.53,54,9,0.1667,False
+040,St.Andrew-Windfields,16960,23,1.36,28,10,0.3571,True
+041,Bridle Path-Sunnybrook-York Mills,8940,13,1.45,14,3,0.2143,True
+042,Banbury-Don Mills,27155,85,3.13,81,9,0.1111,False
+043,Victoria Village,17365,25,1.44,21,1,0.0476,True
+044,Flemingdon Park,22530,10,0.44,11,1,0.0909,True
+046,Pleasant View,15220,10,0.66,11,2,0.1818,True
+047,Don Valley Village,26775,33,1.23,31,4,0.129,True
+048,Hillcrest Village,16345,38,2.32,41,7,0.1707,True
+049,Bayview Woods-Steeles,12085,13,1.08,13,0,0.0,True
+050,Newtonbrook East,15345,24,1.56,27,3,0.1111,True
+052,Bayview Village,22330,27,1.21,24,6,0.25,True
+053,Henry Farm,19840,36,1.81,37,4,0.1081,True
+054,O`Connor Parkview,18405,26,1.41,27,1,0.037,True
+055,Thorncliffe Park,20400,35,1.72,35,4,0.1143,True
+056,Leaside-Bennington,16535,29,1.75,25,2,0.08,True
+057,Broadview North,10955,13,1.19,13,1,0.0769,True
+058,Old East York,9160,28,3.06,29,1,0.0345,True
+059,Danforth-East York,17065,13,0.76,18,4,0.2222,True
+060,Woodbine-Lumsden,7915,2,0.25,3,1,0.3333,True
+061,Taylor Massey,15025,21,1.4,17,0,0.0,True
+062,East End Danforth,21840,73,3.34,66,11,0.1667,False
+063,The Beaches,21510,85,3.95,76,11,0.1447,False
+064,Woodbine Corridor,12205,17,1.39,18,2,0.1111,True
+065,Greenwood-Coxwell,14120,62,4.39,57,10,0.1754,False
+066,Danforth,9305,82,8.81,76,8,0.1053,False
+067,Playter Estates-Danforth,7680,47,6.12,43,6,0.1395,True
+068,North Riverdale,11290,68,6.02,66,6,0.0909,False
+069,Blake-Jones,7475,15,2.01,17,4,0.2353,True
+070,South Riverdale,27815,162,5.82,149,18,0.1208,False
+071,Cabbagetown-South St. James Town,11020,34,3.09,37,4,0.1081,True
+072,Regent Park,12750,26,2.04,19,3,0.1579,True
+073,Moss Park,21490,105,4.89,91,12,0.1319,False
+074,North St. James Town,18535,21,1.13,19,3,0.1579,True
+078,Kensington-Chinatown,18120,331,18.27,282,40,0.1418,False
+079,University,6435,109,16.94,81,11,0.1358,False
+080,Palmerston-Little Italy,13120,124,9.45,115,10,0.087,False
+081,Trinity-Bellwoods,15415,228,14.79,195,29,0.1487,False
+083,Dufferin Grove,11215,64,5.71,53,4,0.0755,False
+084,Little Portugal,15485,89,5.75,76,4,0.0526,False
+085,South Parkdale,20495,60,2.93,57,7,0.1228,False
+086,Roncesvalles,14610,102,6.98,95,12,0.1263,False
+087,High Park-Swansea,22665,50,2.21,49,2,0.0408,True
+088,High Park North,21855,38,1.74,31,4,0.129,True
+089,Runnymede-Bloor West Village,10120,41,4.05,35,5,0.1429,True
+090,Junction Area,14010,111,7.92,108,14,0.1296,False
+091,Weston-Pelham Park,10680,22,2.06,19,3,0.1579,True
+092,Corso Italia-Davenport,13200,85,6.44,72,13,0.1806,False
+094,Wychwood,12800,69,5.39,60,8,0.1333,False
+095,Annex,29300,190,6.48,188,26,0.1383,False
+096,Casa Loma,11350,11,0.97,10,0,0.0,True
+097,Yonge-St. Clair,12905,33,2.56,28,5,0.1786,True
+098,Rosedale-Moore Park,20080,52,2.59,49,7,0.1429,True
+099,Mount Pleasant East,16370,68,4.15,66,9,0.1364,False
+100,Yonge-Eglinton,12410,42,3.38,39,4,0.1026,True
+101,Forest Hill South,10860,15,1.38,15,1,0.0667,True
+102,Forest Hill North,12290,13,1.06,12,0,0.0,True
+103,Lawrence Park South,14960,16,1.07,16,2,0.125,True
+105,Lawrence Park North,14675,49,3.34,40,6,0.15,True
+106,Humewood-Cedarvale,13845,11,0.79,8,0,0.0,True
+107,Oakwood Village,20710,31,1.5,30,6,0.2,True
+108,Briar Hill-Belgravia,14575,32,2.2,21,0,0.0,True
+109,Caledonia-Fairbank,10015,12,1.2,9,1,0.1111,True
+110,Keelesdale-Eglinton West,11390,42,3.69,38,2,0.0526,True
+111,Rockcliffe-Smythe,22235,29,1.3,28,1,0.0357,True
+112,Beechborough-Greenbrook,6260,6,0.96,4,0,0.0,True
+113,Weston,18675,65,3.48,51,8,0.1569,False
+114,Lambton Baby Point,7965,6,0.75,5,0,0.0,True
+115,Mount Dennis,13055,16,1.23,17,5,0.2941,True
+116,Steeles,22765,29,1.27,24,3,0.125,True
+118,Tam O'Shanter-Sullivan,27205,51,1.87,48,3,0.0625,True
+119,Wexford/Maryvale,28345,110,3.88,95,6,0.0632,False
+120,Clairlea-Birchmount,26840,76,2.83,64,3,0.0469,False
+121,Oakridge,13705,13,0.95,12,0,0.0,True
+122,Birchcliffe-Cliffside,22700,32,1.41,31,2,0.0645,True
+123,Cliffcrest,16130,20,1.24,23,1,0.0435,True
+124,Kennedy Park,17110,17,0.99,13,1,0.0769,True
+125,Ionview,13365,6,0.45,6,1,0.1667,True
+126,Dorset Park,24305,74,3.04,74,7,0.0946,False
+128,Agincourt South-Malvern West,24170,67,2.77,67,7,0.1045,False
+129,Agincourt North,27540,34,1.23,35,6,0.1714,True
+130,Milliken,23980,198,8.26,169,12,0.071,False
+133,Centennial Scarborough,13380,10,0.75,11,0,0.0,True
+134,Highland Creek,12625,13,1.03,10,0,0.0,True
+135,Morningside,17660,12,0.68,12,1,0.0833,True
+136,West Hill,28140,49,1.74,43,4,0.093,True
+138,Eglinton East,22535,30,1.33,25,2,0.08,True
+139,Scarborough Village,16520,25,1.51,23,2,0.087,True
+140,Guildwood,9680,6,0.62,6,1,0.1667,True
+141,Golfdale-Cedarbrae-Woburn,27085,28,1.03,30,4,0.1333,True
+142,Woburn North,26580,40,1.5,32,0,0.0,True
+143,West Rouge,20670,20,0.97,20,4,0.2,True
+144,Morningside Heights,24940,36,1.44,21,0,0.0,True
+145,Malvern West,17320,16,0.92,13,2,0.1538,True
+146,Malvern East,26095,15,0.57,17,3,0.1765,True
+147,L'Amoreaux West,21545,22,1.02,18,2,0.1111,True
+148,East L'Amoreaux,21495,7,0.33,7,1,0.1429,True
+149,Parkwoods-O'Connor Hills,13965,18,1.29,19,2,0.1053,True
+150,Fenside-Parkwoods,20510,8,0.39,6,0,0.0,True
+151,Yonge-Doris,20160,94,4.66,89,12,0.1348,False
+152,East Willowdale,15485,6,0.39,5,0,0.0,True
+153,Avondale,13790,16,1.16,17,4,0.2353,True
+154,Oakdale-Beverley Heights,21420,31,1.45,28,4,0.1429,True
+155,Downsview,17970,58,3.23,47,4,0.0851,True
+156,Bendale-Glen Andrew,18685,41,2.19,44,8,0.1818,True
+157,Bendale South,10725,15,1.4,12,1,0.0833,True
+158,Islington,23460,48,2.05,50,6,0.12,False
+159,Etobicoke City Centre,23600,105,4.45,96,8,0.0833,False
+160,Mimico-Queensway,17045,31,1.82,27,3,0.1111,True
+161,Humber Bay Shores,22605,24,1.06,19,3,0.1579,True
+162,West Queen West,13170,72,5.47,70,13,0.1857,False
+163,Fort York-Liberty Village,19915,40,2.01,36,4,0.1111,True
+164,Wellington Place,25570,245,9.58,243,54,0.2222,False
+165,Harbourfront-CityPlace,28135,70,2.49,60,4,0.0667,False
+166,St Lawrence-East Bayfront-The Islands,31285,138,4.41,114,11,0.0965,False
+167,Church-Wellesley,22320,100,4.48,94,16,0.1702,False
+168,Downtown Yonge East,17700,175,9.89,168,31,0.1845,False
+169,Bay-Cloverhill,16670,100,6.0,90,12,0.1333,False
+170,Yonge-Bay Corridor,12645,264,20.88,251,39,0.1554,False
+171,Junction-Wallace Emerson,23180,59,2.55,52,6,0.1154,False
+172,Dovercourt Village,12380,56,4.52,51,7,0.1373,False
+173,North Toronto,15885,57,3.59,51,6,0.1176,False
+174,South Eglinton-Davisville,22735,48,2.11,45,8,0.1778,True

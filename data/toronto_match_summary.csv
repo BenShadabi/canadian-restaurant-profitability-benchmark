@@ -1,0 +1,9 @@
+item,count,meaning
+licences_in_scope,10819,eating or drinking licences active on the download date or live on 2023-01-01
+address_match,8829,placed by matching the street address to a DineSafe premises
+postal_code_centre,1728,placed at the average position of DineSafe premises with the same postal code (approximate)
+not_placed,262,"no address or postal code match, left out of every neighbourhood figure"
+outside_neighbourhoods,0,"placed, but outside all 158 neighbourhood boundaries"
+raw_cancellations_2023_2025,2181,"placed licences cancelled in the window, before removing re-issued addresses"
+exits_2023_2025,881,"of those, cancellations with no new licence at the same address and unit within 90 days"
+active_total_all_toronto,7935,"active licences, including any not placed"

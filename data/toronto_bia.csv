@@ -1,0 +1,87 @@
+bia_name,active_licences,live_at_2023_01_01,exits_2023_2025,exit_rate_3yr,low_sample
+Toronto Downtown West,242,238,47,0.1975,False
+Yonge North York,186,177,23,0.1299,False
+Downtown Yonge,154,146,25,0.1712,False
+Financial District,147,130,23,0.1769,False
+Old Town Toronto,140,133,15,0.1128,False
+Chinatown,126,105,14,0.1333,False
+Bloor-Yorkville,116,110,17,0.1545,False
+Danforth Mosaic,111,106,14,0.1321,False
+West Queen West,106,98,12,0.1224,False
+DuKe Heights,105,94,11,0.117,False
+Greektown on the Danforth,87,82,11,0.1341,False
+Queen Street West,86,79,19,0.2405,False
+Emery Village,86,75,9,0.12,False
+The Waterfront,79,64,7,0.1094,False
+Little Portugal Toronto,78,67,7,0.1045,False
+Kensington Market,77,62,7,0.1129,False
+The Beach,75,70,10,0.1429,False
+Bloorcourt Village,72,67,6,0.0896,False
+Little Italy,72,73,13,0.1781,False
+Parkdale Village,70,69,12,0.1739,False
+Leslieville,66,56,5,0.0893,False
+Korea Town,58,55,1,0.0182,False
+Roncesvalles Village,56,49,3,0.0612,True
+Bloor Annex,55,44,1,0.0227,True
+Wexford Heights,54,44,5,0.1136,True
+Kennedy Road,53,51,5,0.098,False
+Shop The Queensway,52,46,3,0.0652,True
+Bloor West Village,52,46,5,0.1087,True
+Corso Italia,52,42,5,0.119,True
+Uptown Yonge,51,48,7,0.1458,True
+Wilson Village,51,46,4,0.087,True
+Yonge Lawrence Village,50,41,7,0.1707,True
+Danforth Village,47,41,2,0.0488,True
+Cabbagetown,46,46,5,0.1087,True
+Ossington Avenue,45,38,1,0.0263,True
+The Junction,45,48,8,0.1667,True
+Trinity-Bellwoods,43,33,6,0.1818,True
+Yonge & St. Clair,43,37,5,0.1351,True
+Midtown Yonge,43,41,7,0.1707,True
+Liberty Village,41,37,6,0.1622,True
+College Promenade,39,33,4,0.1212,True
+Broadview Danforth,36,35,2,0.0571,True
+Bayview Leaside,35,31,6,0.1935,True
+Riverside District,34,30,3,0.1,True
+Church-Wellesley Village,33,39,7,0.1795,True
+The Kingsway,33,29,3,0.1034,True
+Bloordale Village,32,25,1,0.04,True
+Mount Pleasant Village,31,31,3,0.0968,True
+Hillcrest Village,31,29,4,0.1379,True
+Rogers Road,30,26,2,0.0769,True
+Regal Heights Village,30,25,6,0.24,True
+Sheppard East Village,30,33,4,0.1212,True
+Cedarbrae Markham Lawrence Village ,30,26,2,0.0769,True
+Wychwood Heights,29,24,2,0.0833,True
+Gerrard India Bazaar,29,28,4,0.1429,True
+Rosedale Main Street,27,26,7,0.2692,True
+St. Clair Gardens,27,23,3,0.1304,True
+Weston Village,27,22,4,0.1818,True
+Lakeshore Village,25,28,3,0.1071,True
+Upper Village,24,20,0,0.0,True
+Albion Islington Square,24,22,4,0.1818,True
+Bloor By The Park,23,25,2,0.08,True
+Historic Queen East,22,21,7,0.3333,True
+York-Eglinton ,22,15,2,0.1333,True
+The Eglinton Way,21,17,1,0.0588,True
+Long Branch,21,17,0,0.0,True
+Harbord Street,21,16,4,0.25,True
+Dupont by the Castle,20,24,4,0.1667,True
+Lawrence Ingram Keele,19,19,1,0.0526,True
+Village of Islington,17,20,3,0.15,True
+Mimico By The Lake,17,15,1,0.0667,True
+Oakwood Village,17,18,3,0.1667,True
+CityPlace and Fort York,17,12,0,0.0,True
+Humber Bay Shores,16,12,2,0.1667,True
+Baby Point Gates,16,11,1,0.0909,True
+Fairbank Village,15,11,0,0.0,True
+Pape Village,15,16,1,0.0625,True
+College West,15,13,0,0.0,True
+Eglinton Hill,13,12,0,0.0,True
+Crossroads of the Danforth,11,10,0,0.0,True
+Mount Dennis,11,13,4,0.3077,True
+Forest Hill Village,9,10,1,0.1,True
+MarkeTO District,9,12,3,0.25,True
+Dovercourt Village,7,5,1,0.2,True
+Mirvish Village,7,5,0,0.0,True
+Mimico Village,6,6,2,0.3333,True
