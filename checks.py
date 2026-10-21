@@ -167,7 +167,7 @@ tor = read("docs/toronto.html")
 tcity = tn.active_licences.sum() / tn.population_2021.sum() * 1000
 check("Toronto page shows the placed total, city density and closure share",
       f"{int(tn.active_licences.sum()):,}" in tor and f"{tcity:.1f}" in tor and f"{tn.exits_2023_2025.sum() / tn.live_at_2023_01_01.sum():.1%}" in tor)
-check("Toronto page says it is not profit and lists its limits", "not profit" in tor.lower() and "<h2>Limits</h2>" in tor and "Not profit." in tor)
+check("Toronto page says it is not profit and lists its limits", "not profit" in tor.lower() and ">Limits</h2>" in tor and "Not profit." in tor)
 check("Toronto page, README and project page link each other", "toronto.html" in readme and "toronto.html" in page and "index.html" in tor)
 check("no em dashes on the Toronto page", "\u2014" not in tor)
 check("the national profit numbers do not use Toronto data", "toronto" not in open("analysis/scenario.py", encoding="utf-8").read().lower())
