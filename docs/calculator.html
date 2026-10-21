@@ -29,7 +29,7 @@ th:first-child,td:first-child{text-align:left}th{color:var(--muted);font-weight:
 button{min-height:44px;padding:0 16px;font:inherit;font-weight:600;border-radius:8px;border:1px solid var(--link);background:transparent;color:var(--link);cursor:pointer}
 footer{color:var(--muted);font-size:.875rem;padding:24px 0 40px}
 @media(max-width:620px){.inputs,.big{grid-template-columns:1fr}}
-</style></head><body>
+</style><link rel="stylesheet" href="motion.css"></head><body>
 <header><div class="wrap"><p class="eyebrow">Student project by Ben Shadabi · Business Analytics (BBA), George Brown College</p>
 <h1>Compare your restaurant to the benchmark</h1>
 <p>Enter one year of your numbers. The page works out your margin, compares every cost line with the average Canadian restaurant, and shows what a 1% cut is worth to you. It runs in your browser and sends nothing anywhere.</p></div></header>
@@ -64,6 +64,7 @@ footer{color:var(--muted);font-size:.875rem;padding:24px 0 40px}
 <p><a href="index.html">Back to the project page</a> · <a href="dashboard.html">Dashboard</a> · <a href="https://github.com/BenShadabi/canadian-restaurant-profitability-benchmark">Code and data</a></p>
 </main>
 <footer><div class="wrap">Contains information licensed under the Open Government Licence - Canada. Font: Geist (SIL Open Font License). This is a comparison tool, not financial advice.</div></footer>
+<script src="motion.js" defer></script>
 <script>
 // Average restaurant, ISED CIS NAICS 7225, 2024 (data/average_restaurant_2024.csv)
 const BENCH = {rev:849200, cos:380400, lab:200200, rent:71600, util:21500, amort:23200, profit:21500};

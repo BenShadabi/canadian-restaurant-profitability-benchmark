@@ -169,8 +169,9 @@ footer{color:var(--muted);font-size:.875rem;padding:30px 0 48px}
 </ul>
 <p><a href="index.html">Back to the national benchmark</a> · <a href="dashboard.html">Dashboard</a> · <a href="calculator.html">Compare your restaurant</a> · <a href="https://github.com/BenShadabi/canadian-restaurant-profitability-benchmark">Code and data</a></p>
 </main>
-<footer><div class="wrap">Student project by Ben Shadabi, Business Analytics (BBA), George Brown College. Contains information licensed under the Open Government Licence - Toronto (City of Toronto Open Data). Font: Geist (SIL Open Font License).</div></footer>
+<footer><div class="wrap">Student project by Ben Shadabi, Business Analytics (BBA), George Brown College. Contains information licensed under the <a href="https://open.toronto.ca/open-data-licence/">Open Government Licence – Toronto</a> (City of Toronto Open Data). This project is not endorsed by the City of Toronto. Font: Geist (SIL Open Font License).</div></footer>
 
+<script src="motion.js" defer></script>
 <script>
 const D=%%DATA%%, RD=%%RD%%, RLO=%%RLO%%, RHI=%%RHI%%;
 const byC=Object.fromEntries(D.map(d=>[d.c,d])), $=id=>document.getElementById(id);

@@ -172,6 +172,13 @@ check("Toronto page, README and project page link each other", "toronto.html" in
 check("no em dashes on the Toronto page", "\u2014" not in tor)
 check("the national profit numbers do not use Toronto data", "toronto" not in open("analysis/scenario.py", encoding="utf-8").read().lower())
 
+# ---------- 7. shared design files ----------
+import os
+check("shared motion.css and motion.js exist and every page loads them",
+      os.path.exists("docs/motion.css") and os.path.exists("docs/motion.js") and all("motion.js" in read(f"docs/{p}.html") for p in ("index", "dashboard", "calculator", "toronto")))
+check("no em dashes in motion.css or motion.js", "\u2014" not in read("docs/motion.css") + read("docs/motion.js"))
+check("Toronto page credits the Open Government Licence - Toronto", "Open Government Licence" in tor and "open.toronto.ca/open-data-licence" in tor)
+
 # ---------- result ----------
 failed = [n for n, ok in results if not ok]
 print(f"\n{len(results) - len(failed)} of {len(results)} checks passed")
