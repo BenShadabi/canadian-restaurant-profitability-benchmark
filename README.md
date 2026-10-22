@@ -4,17 +4,22 @@
 
 ![The average Canadian restaurant keeps 2.5 cents of every dollar it sells](assets/banner.png)
 
-**[Open the dashboard](docs/dashboard.html)** · **[Compare your own restaurant](docs/calculator.html)** · [Project page](docs/index.html) · [Methodology](docs/methodology.md)
+**[Open the dashboard](https://benshadabi.github.io/canadian-restaurant-profitability-benchmark/dashboard.html)** · **[Compare your own restaurant](https://benshadabi.github.io/canadian-restaurant-profitability-benchmark/calculator.html)** · [Project page](https://benshadabi.github.io/canadian-restaurant-profitability-benchmark/) · [Methodology](docs/methodology.md)
 
 **Business question:** where does a typical Canadian restaurant make and lose money, and how much would tighter labour, overhead and waste control change its profit?
 
 I'm Ben Shadabi, a Business Analytics (BBA) student at George Brown College in Toronto. I built this with Claude Code. I co-founded and managed a dine-in and take-out restaurant for three years, so I know which numbers matter in this industry, and this project tests those ideas against public data. Every figure comes from the published releases linked in `docs/methodology.md`.
 
-[Project page](docs/index.html), [dashboard](docs/dashboard.html) and [calculator to compare your own restaurant](docs/calculator.html). To open them, download the repo and open the files in a browser, or turn on GitHub Pages for the `/docs` folder. The dashboard has a dark mode and hover tooltips on the charts.
+[Project page](https://benshadabi.github.io/canadian-restaurant-profitability-benchmark/), [dashboard](https://benshadabi.github.io/canadian-restaurant-profitability-benchmark/dashboard.html) and [calculator to compare your own restaurant](https://benshadabi.github.io/canadian-restaurant-profitability-benchmark/calculator.html) are live web pages, so these links open the finished pages. (Clicking the files inside the `docs` folder on GitHub shows their code instead.) The dashboard has a dark mode and hover tooltips on the charts.
 
 ![Dashboard](assets/dashboard_page.png)
 
 All six charts as one image: [assets/dashboard.png](assets/dashboard.png).
+
+## Where to look
+- **Just want to see it?** Use the links at the top. They open the finished pages.
+- **Want the code?** `analysis/` has the Python (scenario, charts, dashboard, stress test, Toronto work), `sql/queries.sql` has the 8 SQL queries, `data/` has the CSVs and the Excel workbook, and `checks.py` recomputes every headline number.
+- **Want the method and limits?** [docs/methodology.md](docs/methodology.md).
 
 ## Key findings
 1. Margins are thin. The average Canadian restaurant earned a 2.5% net profit margin in 2024 ($21,500 on $849,200 revenue). 42.3% of restaurants lost money. Industry-wide operating margin was 4.1%.
@@ -42,7 +47,7 @@ Two things to know before you trust the headline number:
 A 1% cut to cost of sales is worth $3,804 a year, almost twice a 1% cut to labour ($2,002).
 
 ## Try it: compare your own restaurant
-[docs/calculator.html](docs/calculator.html) takes one year of your numbers and compares each cost line with the benchmark, then shows your margin, break-even revenue and what a 1% cut is worth. It runs in the browser and sends nothing anywhere. The picture below is a made-up example restaurant that loses $18,000, mainly because labour is 31.4% of revenue against a 23.6% benchmark.
+[the calculator](https://benshadabi.github.io/canadian-restaurant-profitability-benchmark/calculator.html) takes one year of your numbers and compares each cost line with the benchmark, then shows your margin, break-even revenue and what a 1% cut is worth. It runs in the browser and sends nothing anywhere. The picture below is a made-up example restaurant that loses $18,000, mainly because labour is 31.4% of revenue against a 23.6% benchmark.
 
 ![Calculator showing an example restaurant that loses $18,000](assets/calculator.png)
 
@@ -56,10 +61,10 @@ Statistics Canada has not published 2025 margins or cost shares yet, so the prof
 - I read these figures from the December 2025 release as reported (The Daily, 2026-02-25) while the Statistics Canada site was down, so re-check them against the release when it is back.
 
 ## Stress test: inflation, wages, rent and falling sales
-[docs/stress.html](docs/stress.html) lets you move sliders for food costs, wages, rent, other costs, menu prices and sales volume and see what happens to the average restaurant's profit, with presets (a typical recent year, a minimum wage step, construction outside the door, everything at once). With a 2.5% margin, sales falling just 5.3% wipes out the average restaurant's profit. It is a what-if, not a forecast. The sources it cites (menu price inflation, Ontario minimum wage history, Restaurants Canada's 2025 survey, closure estimates) are listed on the page with notes on what I could not verify. The code is `analysis/stress_model.py` and `analysis/build_stress.py`.
+[the stress test page](https://benshadabi.github.io/canadian-restaurant-profitability-benchmark/stress.html) lets you move sliders for food costs, wages, rent, other costs, menu prices and sales volume and see what happens to the average restaurant's profit, with presets (a typical recent year, a minimum wage step, construction outside the door, everything at once). With a 2.5% margin, sales falling just 5.3% wipes out the average restaurant's profit. It is a what-if, not a forecast. The sources it cites (menu price inflation, Ontario minimum wage history, Restaurants Canada's 2025 survey, closure estimates) are listed on the page with notes on what I could not verify. The code is `analysis/stress_model.py` and `analysis/build_stress.py`.
 
 ## Toronto side project: restaurants by neighbourhood
-[docs/toronto.html](docs/toronto.html) is a separate analysis from the national profit work above. It uses City of Toronto open data (business licences, DineSafe, neighbourhood and BIA boundaries, 2021 census population) to show licensed restaurants and bars per 1,000 residents and the share of licences that ended from 2023 to 2025, for the 158 neighbourhoods and 86 business improvement areas.
+[the Toronto page](https://benshadabi.github.io/canadian-restaurant-profitability-benchmark/toronto.html) is a separate analysis from the national profit work above. It uses City of Toronto open data (business licences, DineSafe, neighbourhood and BIA boundaries, 2021 census population) to show licensed restaurants and bars per 1,000 residents and the share of licences that ended from 2023 to 2025, for the 158 neighbourhoods and 86 business improvement areas.
 
 ![Toronto maps: restaurants per 1,000 residents and licence closure share](assets/toronto_map.png)
 
