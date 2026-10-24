@@ -58,7 +58,7 @@ Statistics Canada has not published 2025 margins or cost shares yet, so the prof
 - Food services and drinking places: $101.4B, up 5.6% on 2024.
 - Limited-service eating places: $47.3B (+5.9%). Full-service restaurants: $43.6B (+5.8%). Limited-service stayed ahead. Drinking places: -2.3%.
 - This is a different basis from the annual operating revenue above ($99.6B in 2024), so the two are not combined. Some of the growth is price: a tax break on restaurant food started on December 14, 2024.
-- I read these figures from the December 2025 release as reported (The Daily, 2026-02-25) while the Statistics Canada site was down, so re-check them against the release when it is back.
+- I checked these figures against the Statistics Canada release itself (The Daily, 2026-02-25) on 2026-10-24.
 
 ## Stress test: inflation, wages, rent and falling sales
 [the stress test page](https://benshadabi.github.io/canadian-restaurant-profitability-benchmark/stress.html) lets you move sliders for food costs, wages, rent, other costs, menu prices and sales volume and see what happens to the average restaurant's profit, with presets (a typical recent year, a minimum wage step, construction outside the door, everything at once). With a 2.5% margin, sales falling just 5.3% wipes out the average restaurant's profit. It is a what-if, not a forecast. The sources it cites (menu price inflation, Ontario minimum wage history, Restaurants Canada's 2025 survey, closure estimates) are listed on the page with notes on what I could not verify. The code is `analysis/stress_model.py` and `analysis/build_stress.py`.

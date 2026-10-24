@@ -40,7 +40,7 @@
 See the README. In short: segment revenue does not add up to the industry total, 2020 was later revised, averages, different bases between sources, approximations for 2019 and 2022, blank segment margins for 2023 and 2024, and the scenario is a what-if.
 
 ## 2025 sales
-`data/sales_2025.csv` holds 2025 sales from the monthly Survey of Food Services and Drinking Places. It is not the same measure as the annual operating revenue in `industry_trend.csv`, so the two series are not mixed. The figures were read from the December 2025 release as reported by Retail Insider while statcan.gc.ca was unavailable, and should be re-checked against The Daily. No 2025 margins, cost shares or wages were found.
+`data/sales_2025.csv` holds 2025 sales from the monthly Survey of Food Services and Drinking Places. It is not the same measure as the annual operating revenue in `industry_trend.csv`, so the two series are not mixed. The figures were first read from news coverage, then checked against the December 2025 release in The Daily (2026-02-25) on 2026-10-24. No 2025 margins, cost shares or wages were found.
 
 ## Toronto neighbourhoods (side project)
 Separate from the profit analysis above. Sources, all City of Toronto Open Data (open.toronto.ca): Municipal Licensing and Standards business licences (category "Eating or Drinking Establishment"), DineSafe (used only for coordinates), Neighbourhoods and Business Improvement Areas boundaries, and the 2021 Neighbourhood Profiles (population). Snapshot downloaded 2026-10-21.
