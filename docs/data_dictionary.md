@@ -21,6 +21,9 @@ Columns: revenue, cost_of_sales, labour_and_commissions, rent, utilities_and_tel
 ## data/sales_history.csv (Statistics Canada Table 21-10-0019-01, monthly survey of food services and drinking places)
 Yearly sales, $ billion, 1998 to 2025: `total_bn`, `full_service_bn`, `limited_service_bn`, `special_food_bn`, `drinking_places_bn`. Each value is the twelve unadjusted monthly receipts for Canada added up (vectors in the `source` column). Downloaded from the Statistics Canada web data service on 2026-10-26. Sales only, current dollars.
 
+## data/cpi_canada.csv (Statistics Canada Table 18-10-0004-01, all-items CPI, Canada)
+Yearly average of the twelve monthly all-items Consumer Price Index values, 2002 = 100, 1998 to 2025 (vector v41690973, not seasonally adjusted). Read on 2026-10-26 from the Bank of Canada Valet API, which republishes the Statistics Canada series, because the Statistics Canada download service was not responding. Used to put every year of `sales_history.csv` in 2025 dollars: sales x CPI 2025 / CPI that year.
+
 ## data/wages_food_services.csv
 Average hourly wage, accommodation and food services, dollars per hour (Statistics Canada Table 14-10-0206-01, via ISED), 2020 to 2024.
 

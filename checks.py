@@ -224,6 +224,13 @@ check("sales history: 2020 is the worst year", int(hs.year[hs.total_bn.pct_chang
 check("dashboard shows the 1998 and 2025 sales and the average growth", f"${hs.total_bn.iloc[0]:.1f}B in 1998" in dash
       and f"${hs.total_bn.iloc[-1]:.1f}B in 2025" in dash and f"about {hs_cagr:.1f}% a year" in dash)
 check("README shows the sales-since-1998 picture and the same average", "assets/sales_history.gif" in readme and f"about {hs_cagr:.1f}% a year" in readme)
+cpi = pd.read_csv("data/cpi_canada.csv").set_index("year")["cpi_2002_100"]
+real98 = hs.total_bn.iloc[0] * cpi[2025] / cpi[1998]
+hs_rcagr = ((hs.total_bn.iloc[-1] / real98) ** (1 / 27) - 1) * 100
+check("CPI covers every sales year and only rises over the period", list(cpi.index) == list(hs.year) and cpi[2025] > cpi[1998])
+check("after inflation: 1998 sales are $57.4B in 2025 dollars and growth is about 2.1% a year", round(real98, 1) == 57.4 and round(hs_rcagr, 1) == 2.1)
+check("dashboard and README show the after-inflation growth", f"({hs_rcagr:.1f}% after inflation)" in dash and "After inflation" in dash
+      and f"After inflation it is about {hs_rcagr:.1f}% a year" in readme and f"${real98:.1f}B" in readme)
 
 # ---------- result ----------
 failed = [n for n, ok in results if not ok]

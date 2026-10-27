@@ -22,7 +22,7 @@ LOSS_SHARE, N_BUS = cnt["loss_making_share"], int(cnt["businesses"])
 s25 = pd.read_csv("data/sales_2025.csv").set_index("segment")
 LS25, FS25 = s25.loc["Limited-service eating places"], s25.loc["Full-service restaurants"]
 TOT25 = s25.loc["Food services and drinking places (total)"]
-hist = pd.read_csv("data/sales_history.csv")
+hist = pd.read_csv("data/sales_history.csv").merge(pd.read_csv("data/cpi_canada.csv")[["year", "cpi_2002_100"]], on="year")
 
 # ---------- numbers (same maths as analysis/build_charts.py and the workbook Scenario tab) ----------
 rev, cos, lab, util = avg["revenue"], avg["cost_of_sales"], avg["labour_and_commissions"], avg["utilities_and_telecom"]
@@ -34,6 +34,8 @@ m0, m1 = p0 / rev * 100, p1 / rev * 100
 h0, h1 = hist.iloc[0], hist.iloc[-1]
 HY0, HY1, HN = int(h0.year), int(h1.year), len(hist)
 cagr = ((h1.total_bn / h0.total_bn) ** (1 / (HY1 - HY0)) - 1) * 100   # average growth a year over the whole period
+real0 = h0.total_bn * h1.cpi_2002_100 / h0.cpi_2002_100   # 1998 sales in 2025 dollars (all-items CPI)
+rcagr = ((h1.total_bn / real0) ** (1 / (HY1 - HY0)) - 1) * 100   # the same average after inflation
 yoy = hist.total_bn.pct_change() * 100
 worst = int(hist.year[yoy.idxmin()])
 w0, w1 = wag.avg_hourly_wage_cad.iloc[0], wag.avg_hourly_wage_cad.iloc[-1]
@@ -146,12 +148,12 @@ def history_svg():
     for i, y in enumerate(hist.year):
         if (y - HY0) % 3 == 0:
             s.append(f'<text x="{xp(i):.1f}" y="{HH-10}" text-anchor="middle" class="ax">{int(y)}</text>')
-    s.append(f'<path d="{trend}" fill="none" stroke="{MUTED}" stroke-width="1.5" stroke-dasharray="3 5"/>'
-             f'<text x="{xp(HN * 0.7):.1f}" y="{yp(h0.total_bn * (1 + cagr / 100) ** (HN * 0.7)) - 12:.1f}" text-anchor="end" class="ax">average path, {cagr:.1f}% a year</text>')
+    s.append(f'<path id="hptr" d="{trend}" fill="none" stroke="{MUTED}" stroke-width="1.5" stroke-dasharray="3 5"/>'
+             f'<text id="hplab" x="{xp(HN * 0.7):.1f}" y="{yp(h0.total_bn * (1 + cagr / 100) ** (HN * 0.7)) - 12:.1f}" text-anchor="end" class="ax">average path, {cagr:.1f}% a year</text>')
     s.append('<g clip-path="url(#hclip)">'
-             f'<path d="{path("full_service_bn")}" fill="none" stroke="{SLATE}" stroke-width="2"/>'
-             f'<path d="{path("limited_service_bn")}" fill="none" stroke="{GOLD}" stroke-width="2"/>'
-             f'<path d="{path("total_bn")}" fill="none" stroke="{NAVY}" stroke-width="3.5" stroke-linejoin="round"/></g>')
+             f'<path id="hpF" d="{path("full_service_bn")}" fill="none" stroke="{SLATE}" stroke-width="2"/>'
+             f'<path id="hpL" d="{path("limited_service_bn")}" fill="none" stroke="{GOLD}" stroke-width="2"/>'
+             f'<path id="hpT" d="{path("total_bn")}" fill="none" stroke="{NAVY}" stroke-width="3.5" stroke-linejoin="round"/></g>')
     s.append(f'<line id="hcur" x1="0" x2="0" y1="{HT}" y2="{HH-HB}" stroke="{INK}" stroke-opacity=".25"/>'
              f'<g id="hdot"><circle r="6" fill="{NAVY}" stroke="var(--card)" stroke-width="2"/><g class="spark" transform="translate(14,-16)"><g>{SPARK}</g></g></g>')
     step = xp(1) - xp(0)
@@ -162,12 +164,26 @@ def history_svg():
 
 HIST_JSON = json.dumps(hist.drop(columns="source").to_dict("list"))
 HIST_JS = """
-(function(){var D=%s,yrs=D.year,T=D.total_bn,F=D.full_service_bn,L=D.limited_service_bn,S=D.special_food_bn,K=D.drinking_places_bn,n=yrs.length,G=%.4f,GEO=[%d,%d,%d,%d,%d,%d];
+(function(){var D=%s,yrs=D.year,C=D.cpi_2002_100,n=yrs.length,GEO=[%d,%d,%d,%d,%d,%d],
+keys=['total_bn','full_service_bn','limited_service_bn','special_food_bn','drinking_places_bn'];
 var W=GEO[0],H=GEO[1],PL=GEO[2],PR=GEO[3],PT=GEO[4],PB=GEO[5];
 var $=function(id){return document.getElementById(id)},rng=$('hrange'),btn=$('hplay'),cr=$('hcr'),cur=$('hcur'),dot=$('hdot');
-var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches,pos=n-1,timer=null;
+var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches,pos=n-1,timer=null,mix=0,T,F,L,S,K,G;
+var hits=[].slice.call(document.querySelectorAll('#hsvg .hit')),mbtn=[].slice.call(document.querySelectorAll('#hmode button'));
 function xp(i){return PL+(W-PL-PR)*i/(n-1)}function yp(v){return PT+(H-PT-PB)*(1-v/120)}
 function b(v){return '$'+v.toFixed(1)+'B'}function pc(v){return (v>=0?'+':'')+v.toFixed(1)+'%%'}
+function line(a){return 'M'+a.map(function(v,i){return xp(i).toFixed(1)+','+yp(v).toFixed(1)}).join(' L')}
+// m = 0 shows the dollars of each year, 1 shows 2025 dollars (each year times CPI 2025 / CPI that year); in between is the tween
+function setMix(m){mix=m;var A=keys.map(function(k){return D[k].map(function(v,i){return v*(1+(C[n-1]/C[i]-1)*m)})});
+T=A[0];F=A[1];L=A[2];S=A[3];K=A[4];G=(Math.pow(T[n-1]/T[0],1/(n-1))-1)*100;
+$('hpT').setAttribute('d',line(T));$('hpF').setAttribute('d',line(F));$('hpL').setAttribute('d',line(L));
+$('hptr').setAttribute('d',line(T.map(function(_,i){return T[0]*Math.pow(T[n-1]/T[0],i/(n-1))})));
+var lab=$('hplab');lab.setAttribute('y',(yp(T[0]*Math.pow(T[n-1]/T[0],n*.7/(n-1)))-12).toFixed(1));lab.textContent='average path, '+G.toFixed(1)+'%% a year';
+$('hmu').style.left=((G+30)/45*100).toFixed(1)+'%%';$('hcap').textContent='Growth that year. The line marks the '+G.toFixed(1)+'%% average.';
+hits.forEach(function(r,i){r.setAttribute('data-tip',yrs[i]+(m>.5?' (2025 dollars)':'')+'|Total '+b(T[i])+'|Full-service '+b(F[i])+'|Limited-service '+b(L[i]))});
+var lo=1,hi=1,g=function(i){return (T[i]/T[i-1]-1)*100};for(var i=2;i<n;i++){if(g(i)<g(lo))lo=i;if(g(i)>g(hi))hi=i}
+$('hwb').textContent='Worst year: '+yrs[lo]+' ('+pc(g(lo))+'), when dining rooms closed. Best: '+yrs[hi]+' ('+pc(g(hi))+'), the rebound.';
+draw(pos)}
 function draw(p){pos=p;var i=Math.floor(p),f=p-i,j=Math.min(n-1,i+1),x=xp(p),y=yp(T[i]+(T[j]-T[i])*f);
 cr.setAttribute('width',x+1);cur.setAttribute('x1',x);cur.setAttribute('x2',x);dot.setAttribute('transform','translate('+x.toFixed(1)+','+y.toFixed(1)+')');
 var k=Math.round(p);if(rng.value!=k)rng.value=k;show(k)}
@@ -178,17 +194,23 @@ $('hvs').textContent=g===null?'Press play to watch the years go by.':(g>=G?'Fast
 function stop(){if(timer){cancelAnimationFrame(timer);timer=null}btn.setAttribute('aria-pressed','false');btn.querySelector('span').textContent='Play '+yrs[0]+' to '+yrs[n-1]}
 function play(){if(timer)return stop();var start=pos>=n-1?0:pos,t0=performance.now(),dur=(n-1-start)*260;btn.setAttribute('aria-pressed','true');btn.querySelector('span').textContent='Pause';
 (function f(t){var k=Math.min(1,(t-t0)/dur);draw(start+(n-1-start)*k);timer=k<1?requestAnimationFrame(f):null;if(!timer)stop()})(t0)}
+function mode(m,now){var from=mix,t0=performance.now();mbtn.forEach(function(x){x.setAttribute('aria-pressed',String(+x.dataset.m===m))});
+$('hunit').textContent=m?'in 2025 dollars, after inflation':'in the dollars of that year';
+if(now||reduce){setMix(m);cmp();return}
+(function f(t){var k=Math.min(1,(t-t0)/700),e=k<.5?2*k*k:1-Math.pow(2-2*k,2)/2;setMix(from+(m-from)*e);if(k<1)requestAnimationFrame(f);else cmp()})(t0)}
 btn.addEventListener('click',play);rng.addEventListener('input',function(){stop();draw(+rng.value)});
-document.querySelectorAll('#hsvg .hit').forEach(function(r){r.addEventListener('click',function(){stop();draw(+r.dataset.i)})});
+hits.forEach(function(r){r.addEventListener('click',function(){stop();draw(+r.dataset.i)})});
+mbtn.forEach(function(x){x.addEventListener('click',function(){mode(+x.dataset.m)})});
 var a=$('ca'),c=$('cb');yrs.forEach(function(y,i){a.add(new Option(y,i));c.add(new Option(y,i))});a.value=0;c.value=n-1;
 function cmp(){var i=+a.value,j=+c.value,rows=[['Total',T],['Full-service',F],['Limited-service',L],['Special food services',S],['Drinking places',K]],mx=Math.max(T[i],T[j]);
-$('cbars').innerHTML=rows.map(function(r){var u=r[1][i],v=r[1][j],ch=(v/u-1)*100;return '<li><span class="k">'+r[0]+'</span><span class="pair"><i class="ia" style="width:'+(u/mx*100).toFixed(1)+'%%"></i><i class="ib" style="width:'+(v/mx*100).toFixed(1)+'%%"></i></span><b class="'+(ch<0?'neg':'pos')+'">'+pc(ch)+'</b><small>'+b(u)+' to '+b(v)+'</small></li>'}).join('');
+$('cbars').innerHTML=rows.map(function(r){var u=r[1][i],v=r[1][j],ch=(v/u-1)*100;return '<li><span class="k">'+r[0]+'</span><span class="pair"><i class="ia" style="width:'+(u/mx*100).toFixed(1)+'%%"></i><i class="ib" style="width:'+(v/mx*100).toFixed(1)+'%%"></i></span><b class="'+(ch<0?'neg':'pos')+'">'+pc(ch)+'</b><small>'+b(u)+' to '+b(v)+(mix?' (2025 dollars)':'')+'</small></li>'}).join('');
 $('ckey').innerHTML='<span class="ia"></span>'+yrs[i]+' <span class="ib"></span>'+yrs[j]}
-a.addEventListener('change',cmp);c.addEventListener('change',cmp);cmp();
-var q=new URLSearchParams(location.search).get('year');if(q&&yrs.indexOf(+q)>=0){draw(yrs.indexOf(+q));return}
+a.addEventListener('change',cmp);c.addEventListener('change',cmp);
+var qs=new URLSearchParams(location.search),q=qs.get('year');mode(qs.get('real')==='1'?1:0,true);
+if(q&&yrs.indexOf(+q)>=0){draw(yrs.indexOf(+q));return}
 if(reduce||!('IntersectionObserver' in window)){draw(n-1);return}
 draw(0);var io=new IntersectionObserver(function(es){if(es[0].isIntersecting){io.disconnect();setTimeout(play,400)}},{threshold:.4});io.observe($('hsvg'))})();
-""" % (HIST_JSON, cagr, HW, HH, HL, HR, HT, HB)
+""" % (HIST_JSON, HW, HH, HL, HR, HT, HB)
 
 # 3. 2025 sales by segment (monthly survey, sales only); 2024 = 2025 less the stated dollar increase
 def sales25_svg():
@@ -285,8 +307,9 @@ t_ind = table(["Year", "Revenue $B", "Operating margin", "Full-service $B", "Lim
                 na(r.full_service_margin, lambda v: f"{v*100:.1f}%"), na(r.limited_service_margin, lambda v: f"{v*100:.1f}%")] for r in ind.itertuples()])
 t_avg = table(["Line (average restaurant, 2024)", "Dollars", "% of revenue"],
               [["Revenue", d(rev), "100.0%"]] + [[n, d(v), f"{v/rev*100:.1f}%"] for n, v, _ in cost_rows])
-t_hist = table(["Year", "Total $B", "Full-service $B", "Limited-service $B", "Special food $B", "Drinking places $B"],
-               [[int(r.year), f"{r.total_bn:.2f}", f"{r.full_service_bn:.2f}", f"{r.limited_service_bn:.2f}", f"{r.special_food_bn:.2f}", f"{r.drinking_places_bn:.2f}"] for r in hist.itertuples()])
+t_hist = table(["Year", "Total $B", "Full-service $B", "Limited-service $B", "Special food $B", "Drinking places $B", "CPI (2002=100)", f"Total in {HY1} dollars $B"],
+               [[int(r.year), f"{r.total_bn:.2f}", f"{r.full_service_bn:.2f}", f"{r.limited_service_bn:.2f}", f"{r.special_food_bn:.2f}", f"{r.drinking_places_bn:.2f}",
+                 f"{r.cpi_2002_100:.2f}", f"{r.total_bn * h1.cpi_2002_100 / r.cpi_2002_100:.2f}"] for r in hist.itertuples()])
 t_wag = table(["Year", "Average hourly wage"], [[int(r.year), f"${r.avg_hourly_wage_cad:.2f}"] for r in wag.itertuples()])
 
 # ---------- header strip: one revenue dollar split into its cost lines (drawn to scale) ----------
@@ -358,6 +381,8 @@ footer{{color:var(--muted);font-size:.875rem;padding:var(--sp3) 0 var(--sp5)}}fo
 .spark{{fill:#D97757}}.spark>g{{transform-box:fill-box;transform-origin:center;animation:spin 7s linear infinite}}.play[aria-pressed=true] .spark>g{{animation-duration:1.4s}}
 @keyframes spin{{to{{transform:rotate(360deg)}}}}#hdot .spark>g{{animation:spin 7s linear infinite,pulse 1.6s ease-in-out infinite alternate}}@keyframes pulse{{to{{opacity:.6}}}}
 .byc{{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:.8125rem}}.byc svg{{width:14px;height:14px;overflow:visible}}
+.seg{{display:inline-flex;border:1px solid var(--grid);border-radius:999px;padding:3px;margin:0 0 var(--sp2);background:var(--chip)}}.seg button{{min-height:38px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:600 .875rem var(--sans);cursor:pointer}}
+.seg button[aria-pressed=true]{{background:var(--s1);color:#fff}}.seg button:focus-visible{{outline:3px solid var(--gold);outline-offset:2px}}.read #hunit{{display:block}}
 .cmp{{margin:var(--sp4) 0 0;border-top:1px solid var(--grid);padding-top:var(--sp3)}}.cmp h3{{font:650 1rem/1.35 var(--sans);margin:0 0 var(--sp2)}}
 .cmp select{{min-height:44px;padding:0 10px;border-radius:var(--r);border:1px solid var(--grid);background:var(--card);color:var(--ink);font:600 .9375rem var(--sans)}}
 .cbars{{list-style:none;margin:var(--sp3) 0 0;padding:0}}.cbars li{{display:grid;grid-template-columns:minmax(120px,26%) 1fr 64px;gap:2px var(--sp2);align-items:center;margin:0 0 var(--sp3);font-size:.9375rem}}
@@ -407,15 +432,15 @@ page = f"""<!doctype html>
 <nav class="jump" aria-label="Sections">{nav_html}</nav></div></header>
 <main id="main" class="wrap">
 
-<section class="card hero hist" aria-labelledby="h-30"><h2 id="h-30">Restaurant and bar sales grew from {bn(h0.total_bn,True)} in {HY0} to {bn(h1.total_bn,True)} in {HY1}, about {cagr:.1f}% a year</h2>
-<p class="sub">Canada, all food services and drinking places, {HN} years of the Statistics Canada monthly survey (the full history it publishes). Each year is the twelve unadjusted months added up, so {HY1} reads a little lower than the {bn(TOT25.sales_2025_bn,True)} seasonally adjusted figure below. Sales, not profit, and not adjusted for inflation. The dotted line is the average path: what steady {cagr:.1f}% growth a year would have looked like.</p>
-<div class="in"><div>{history_svg()}
+<section class="card hero hist" aria-labelledby="h-30"><h2 id="h-30">Restaurant and bar sales grew from {bn(h0.total_bn,True)} in {HY0} to {bn(h1.total_bn,True)} in {HY1}, about {cagr:.1f}% a year ({rcagr:.1f}% after inflation)</h2>
+<p class="sub">Canada, all food services and drinking places, {HN} years of the Statistics Canada monthly survey (the full history it publishes). Each year is the twelve unadjusted months added up, so {HY1} reads a little lower than the {bn(TOT25.sales_2025_bn,True)} seasonally adjusted figure below. Sales, not profit. Press <b>After inflation</b> to see every year in {HY1} dollars (all-items Consumer Price Index): growth drops to {rcagr:.1f}% a year, because about half of it was rising prices. The dotted line is the average path: what steady growth at the average rate would have looked like.</p>
+<div class="in"><div><div class="seg" id="hmode" role="group" aria-label="Dollars shown"><button type="button" data-m="0" aria-pressed="true">Before inflation</button><button type="button" data-m="1" aria-pressed="false">After inflation</button></div>{history_svg()}
 <ul class="key"><li><span style="border-color:{NAVY};border-top-width:4px"></span>Total</li><li><span style="border-color:{SLATE}"></span>Full-service</li><li><span style="border-color:{GOLD}"></span>Limited-service</li><li><span style="border-color:{MUTED};border-top-style:dotted"></span>Average path</li></ul>
 <div class="ctl"><button class="play" id="hplay" type="button" aria-pressed="false" aria-controls="hsvg"><svg viewBox="-12 -12 24 24" aria-hidden="true"><g class="spark"><g>{SPARK}</g></g></svg><span>Play {HY0} to {HY1}</span></button>
 <label class="byc" for="hrange">Pick a year</label><input type="range" id="hrange" min="0" max="{HN-1}" step="1" value="{HN-1}" aria-describedby="hvs"></div></div>
-<div class="read" aria-live="polite"><p class="yr" id="hy">{HY1}</p><p class="val" id="hv">{bn(h1.total_bn,True)}</p><p id="hg"></p>
-<div class="meter" aria-hidden="true"><i id="hm"></i><u style="left:{(cagr+30)/45*100:.1f}%"></u></div><small>Growth that year. The line marks the {cagr:.1f}% average.</small>
-<p id="hvs"></p><p>Since {HY0}: <b id="hx"></b></p><p><small>Worst year: {worst} ({yoy.min():.1f}%), when dining rooms closed. Best: {int(hist.year[yoy.idxmax()])} ({yoy.max():+.1f}%), the rebound.</small></p>
+<div class="read" aria-live="polite"><p class="yr" id="hy">{HY1}</p><p class="val" id="hv">{bn(h1.total_bn,True)}</p><small id="hunit">in the dollars of that year</small><p id="hg"></p>
+<div class="meter" aria-hidden="true"><i id="hm"></i><u id="hmu" style="left:{(cagr+30)/45*100:.1f}%"></u></div><small id="hcap">Growth that year. The line marks the {cagr:.1f}% average.</small>
+<p id="hvs"></p><p>Since {HY0}: <b id="hx"></b></p><p><small id="hwb">Worst year: {worst} ({yoy.min():.1f}%), when dining rooms closed. Best: {int(hist.year[yoy.idxmax()])} ({yoy.max():+.1f}%), the rebound.</small></p>
 <p class="byc"><svg viewBox="-12 -12 24 24" aria-hidden="true"><g class="spark"><g>{SPARK}</g></g></svg>Animated with Claude Code</p></div></div>
 <div class="cmp"><h3>Compare any two years</h3><div class="ctl" style="margin:0"><label for="ca">From</label><select id="ca"></select><label for="cb">to</label><select id="cb"></select><span id="ckey"></span></div>
 <ul class="cbars" id="cbars"></ul></div></section>
@@ -458,7 +483,7 @@ page = f"""<!doctype html>
 <details><summary>Industry trend, 2019 to 2024</summary>{t_ind}</details>
 <details><summary>Average restaurant, 2024</summary>{t_avg}</details>
 <details><summary>Hourly wage, 2020 to 2024</summary>{t_wag}</details>
-<details><summary>Sales by segment, {HY0} to {HY1}</summary>{t_hist}</details>
+<details><summary>Sales by segment and inflation, {HY0} to {HY1}</summary>{t_hist}</details>
 </main>
 <footer><div class="wrap">Generated by <code>analysis/build_dashboard.py</code> from the CSV files in <code>data/</code>. Sources: Statistics Canada and ISED Canadian Industry Statistics. Font: Geist (SIL Open Font License).</div></footer>
 <div id="tip" role="presentation"></div>

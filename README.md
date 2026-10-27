@@ -54,11 +54,12 @@ A 1% cut to cost of sales is worth $3,804 a year, almost twice a 1% cut to labou
 ## Sales since 1998 (animated)
 ![Sales since 1998, played year by year on the dashboard](assets/sales_history.gif)
 
-The dashboard now opens with 28 years of sales, the full history of the Statistics Canada monthly survey (`data/sales_history.csv`). Press play and the line is drawn one year at a time, with each year's growth set against the long-run average. You can also drag to any year or compare any two years side by side. [Watch the video](assets/sales_history.mp4).
+The dashboard now opens with 28 years of sales, the full history of the Statistics Canada monthly survey (`data/sales_history.csv`). Press play and the line is drawn one year at a time, with each year's growth set against the long-run average. You can also drag to any year, compare any two years side by side, and switch to **After inflation** to see every year in 2025 dollars. [Watch the video](assets/sales_history.mp4).
 - Sales went from $31.9B in 1998 to $100.2B in 2025, 3.14 times as much. That is about 4.3% a year on average.
+- After inflation it is about 2.1% a year. In 2025 dollars, 1998 sales were $57.4B, so real sales grew 1.75 times, not 3.14. About half of the growth was rising prices (all-items Consumer Price Index).
 - The worst year was 2020 (-27.8%), when dining rooms closed. The best was 2022 (+26.2%), when they reopened.
 - Limited-service grew the most (+282.5%) and passed full-service. Drinking places are smaller than in 1998 (-6.2%).
-- Each year is the twelve unadjusted months added up, so 2025 reads $100.2B here against the seasonally adjusted $101.4B below. These are sales, not profit, and not adjusted for inflation. Profit margins are only published from 2019, so the profit analysis does not go back further.
+- Each year is the twelve unadjusted months added up, so 2025 reads $100.2B here against the seasonally adjusted $101.4B below. These are sales, not profit. Profit margins are only published from 2019, so the profit analysis does not go back further.
 
 ## 2025 update (sales only)
 ![2025 sales by segment, 2024 vs 2025](assets/sales_2025.png)
@@ -105,6 +106,7 @@ data/
   toronto_match_summary.csv            how many licences were placed on the map, and how
   sales_2025.csv                       2025 sales by segment from the monthly survey (sales only, no margins yet)
   sales_history.csv                    yearly sales by segment, 1998 to 2025, from the same survey
+  cpi_canada.csv                       yearly all-items Consumer Price Index, 1998 to 2025, used for the after-inflation view
 analysis/scenario.py                   the scenario maths, read from the CSVs
 analysis/build_scenarios.py            writes the three scenario CSVs and assets/lever_per_point.png
 analysis/add_scenario_rows.py          one-off helper that added the conservative rows to the workbook (keeps its charts)
