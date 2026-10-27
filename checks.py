@@ -214,6 +214,17 @@ check("placebo gap is at least as large as the main gap, so the page must not cl
 check("Toronto page shows the construction numbers", f"{cx.iloc[0].rate_exposed:.1%}" in tor and f"{cx.iloc[0].rate_unexposed:.1%}" in tor and f"{cx.iloc[0].adjusted_difference * 100:+.1f}" in tor)
 check("Toronto page says Metrolinx transit works are not covered", "Metrolinx" in tor and "not in City building permits" in tor)
 
+# ---------- 10. sales since 1998 (monthly survey, unadjusted months summed) ----------
+hs = pd.read_csv("data/sales_history.csv")
+hs_cagr = ((hs.total_bn.iloc[-1] / hs.total_bn.iloc[0]) ** (1 / (hs.year.iloc[-1] - hs.year.iloc[0])) - 1) * 100
+check("sales history runs 1998 to 2025 with no gaps", list(hs.year) == list(range(1998, 2026)))
+check("sales history: segments add up to the total (within rounding)",
+      ((hs.full_service_bn + hs.limited_service_bn + hs.special_food_bn + hs.drinking_places_bn - hs.total_bn).abs() <= 0.05).all())
+check("sales history: 2020 is the worst year", int(hs.year[hs.total_bn.pct_change().idxmin()]) == 2020)
+check("dashboard shows the 1998 and 2025 sales and the average growth", f"${hs.total_bn.iloc[0]:.1f}B in 1998" in dash
+      and f"${hs.total_bn.iloc[-1]:.1f}B in 2025" in dash and f"about {hs_cagr:.1f}% a year" in dash)
+check("README shows the sales-since-1998 picture and the same average", "assets/sales_history.gif" in readme and f"about {hs_cagr:.1f}% a year" in readme)
+
 # ---------- result ----------
 failed = [n for n, ok in results if not ok]
 print(f"\n{len(results) - len(failed)} of {len(results)} checks passed")

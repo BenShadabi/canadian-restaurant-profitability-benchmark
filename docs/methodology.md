@@ -42,6 +42,9 @@ See the README. In short: segment revenue does not add up to the industry total,
 ## 2025 sales
 `data/sales_2025.csv` holds 2025 sales from the monthly Survey of Food Services and Drinking Places. It is not the same measure as the annual operating revenue in `industry_trend.csv`, so the two series are not mixed. The figures were first read from news coverage, then checked against the December 2025 release in The Daily (2026-02-25) on 2026-10-24. No 2025 margins, cost shares or wages were found.
 
+## Sales since 1998
+`data/sales_history.csv` holds every full year of the monthly Survey of Food Services and Drinking Places (Table 21-10-0019-01), which starts in January 1998. Each year is the sum of the twelve unadjusted months, so it is close to but not the same as the seasonally adjusted totals in The Daily (2025: $100.2B here, $101.4B there). The average growth rate is the compound rate from 1998 to 2025: (100.19 / 31.91) ^ (1/27) - 1 = 4.3% a year. Figures are in current dollars, so part of the growth is price. I looked for a longer wage series too, but could not download it on 2026-10-26, so the wage chart stays at 2020 to 2024.
+
 ## Toronto neighbourhoods (side project)
 Separate from the profit analysis above. Sources, all City of Toronto Open Data (open.toronto.ca): Municipal Licensing and Standards business licences (category "Eating or Drinking Establishment"), DineSafe (used only for coordinates), Neighbourhoods and Business Improvement Areas boundaries, and the 2021 Neighbourhood Profiles (population). Snapshot downloaded 2026-10-21.
 - **Active** = issued on or before the snapshot and not cancelled. **Live on 2023-01-01** = issued before it and not cancelled before it. A **closure** = a live licence cancelled between 2023-01-01 and 2025-12-31 with no other licence at the same address and unit issued within 90 days of its cancel date.

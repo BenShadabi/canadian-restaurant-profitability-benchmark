@@ -18,6 +18,9 @@ Average restaurant, 65,071 businesses, revenue $30k to $5M. All values in dollar
 Columns: revenue, cost_of_sales, labour_and_commissions, rent, utilities_and_telecom, amortization_and_depletion, net_profit, bottom_quartile_profit, top_quartile_profit.
 "Other expenses" ($130,800) is calculated as revenue minus the listed expenses minus net profit; it is not a published line.
 
+## data/sales_history.csv (Statistics Canada Table 21-10-0019-01, monthly survey of food services and drinking places)
+Yearly sales, $ billion, 1998 to 2025: `total_bn`, `full_service_bn`, `limited_service_bn`, `special_food_bn`, `drinking_places_bn`. Each value is the twelve unadjusted monthly receipts for Canada added up (vectors in the `source` column). Downloaded from the Statistics Canada web data service on 2026-10-26. Sales only, current dollars.
+
 ## data/wages_food_services.csv
 Average hourly wage, accommodation and food services, dollars per hour (Statistics Canada Table 14-10-0206-01, via ISED), 2020 to 2024.
 

@@ -51,6 +51,15 @@ A 1% cut to cost of sales is worth $3,804 a year, almost twice a 1% cut to labou
 
 ![Calculator showing an example restaurant that loses $18,000](assets/calculator.png)
 
+## Sales since 1998 (animated)
+![Sales since 1998, played year by year on the dashboard](assets/sales_history.gif)
+
+The dashboard now opens with 28 years of sales, the full history of the Statistics Canada monthly survey (`data/sales_history.csv`). Press play and the line is drawn one year at a time, with each year's growth set against the long-run average. You can also drag to any year or compare any two years side by side. [Watch the video](assets/sales_history.mp4).
+- Sales went from $31.9B in 1998 to $100.2B in 2025, 3.14 times as much. That is about 4.3% a year on average.
+- The worst year was 2020 (-27.8%), when dining rooms closed. The best was 2022 (+26.2%), when they reopened.
+- Limited-service grew the most (+282.5%) and passed full-service. Drinking places are smaller than in 1998 (-6.2%).
+- Each year is the twelve unadjusted months added up, so 2025 reads $100.2B here against the seasonally adjusted $101.4B below. These are sales, not profit, and not adjusted for inflation. Profit margins are only published from 2019, so the profit analysis does not go back further.
+
 ## 2025 update (sales only)
 ![2025 sales by segment, 2024 vs 2025](assets/sales_2025.png)
 
@@ -95,6 +104,7 @@ data/
   toronto_bia.csv                      the same for 86 business improvement areas
   toronto_match_summary.csv            how many licences were placed on the map, and how
   sales_2025.csv                       2025 sales by segment from the monthly survey (sales only, no margins yet)
+  sales_history.csv                    yearly sales by segment, 1998 to 2025, from the same survey
 analysis/scenario.py                   the scenario maths, read from the CSVs
 analysis/build_scenarios.py            writes the three scenario CSVs and assets/lever_per_point.png
 analysis/add_scenario_rows.py          one-off helper that added the conservative rows to the workbook (keeps its charts)
@@ -125,7 +135,7 @@ python sql/run_queries.py
 python analysis/build_toronto.py   # optional: needs the Toronto download first (python analysis/toronto_download.py)
 python checks.py
 ```
-`checks.py` recomputes every headline number from the CSVs and fails if the README, the dashboard, the project page, the SQL results or the workbook inputs disagree with the data. To test other cuts, open the workbook and change the blue cells on the Scenario tab. The title picture is the one output that needs a browser, so it is not in the list above (`pip install playwright`, then `python analysis/build_banner.py`).
+`checks.py` recomputes every headline number from the CSVs and fails if the README, the dashboard, the project page, the SQL results or the workbook inputs disagree with the data. To test other cuts, open the workbook and change the blue cells on the Scenario tab. The title picture and the dashboard pictures and video need a browser, so they are not in the list above (`pip install playwright`, then `python analysis/build_banner.py`; for the sales video, serve `docs` locally and run `python analysis/build_sales_video.py`, which needs Google Chrome, pillow and imageio-ffmpeg).
 
 ## Limitations
 - Averages hide wide differences between restaurants. The bottom quartile averaged a $13,000 loss while the top quartile averaged a $90,600 profit.
