@@ -31,7 +31,7 @@ footer{color:var(--muted);font-size:.875rem;padding:24px 0 40px}
 @media(max-width:620px){.big{grid-template-columns:1fr}}
 #card3d{padding:0;overflow:hidden;margin:0}
 .split{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px;align-items:start;margin:20px 0}
-#card3d{position:sticky;top:64px}
+#card3d{margin:0}.leftcol{min-width:0}.h2s{margin:22px 0 8px}.leftcol .card{margin:0}.leftcol table{font-size:.875rem}.leftcol .note{margin:12px 0 0;font-size:.875rem}
 .panel3d{margin:0}
 .stage3d{position:relative;height:580px;background:linear-gradient(180deg,var(--stage1),var(--stage2));touch-action:pan-y;cursor:grab}
 .stage3d:active{cursor:grabbing}.stage3d canvas{display:block;width:100%;height:100%}
@@ -52,14 +52,19 @@ footer{color:var(--muted);font-size:.875rem;padding:24px 0 40px}
 button.i{min-height:0;width:17px;height:17px;padding:0;margin-left:6px;border:0;border-radius:50%;background:var(--grid);color:var(--muted);font:600 11px/17px var(--sans);vertical-align:1px}
 .info{margin:8px 0 0;padding:10px 12px;border-radius:10px;background:var(--bg);font-size:.84rem;color:var(--muted);line-height:1.45}
 .acts{margin-top:18px}
-@media(max-width:860px){.split{grid-template-columns:minmax(0,1fr)}#card3d{position:relative;top:0}.stage3d{height:430px}}
+@media(max-width:860px){.split{grid-template-columns:minmax(0,1fr)}.stage3d{height:430px}}
 </style><link rel="stylesheet" href="motion.css"></head><body>
 <header><div class="wrap"><p class="eyebrow">Student project by Ben Shadabi · Business Analytics (BBA), George Brown College</p>
 <h1>Compare your restaurant to the benchmark</h1>
 <p>Enter one year of your numbers. The page works out your margin, compares every cost line with the average Canadian restaurant, and shows what a 1% cut is worth to you. It runs in your browser and sends nothing anywhere.</p></div></header>
 <main class="wrap">
 <div class="split">
+<div class="leftcol">
 <div class="card" id="card3d"><div class="stage3d" id="stage3d"><div id="badge3d" class="badge3d" hidden></div><div id="tip3d" class="tip3d" hidden></div><div class="leg3d">Left: average restaurant · Right: yours<br>Gold plate = 100% of revenue · red = costs above revenue<br>Drag to turn it, hover a block for its dollars.</div><button id="replay3d" class="rep3d" type="button">Replay</button></div></div>
+<h2 class="h2s">Line by line</h2>
+<div class="card"><table><thead><tr><th>Line</th><th>You</th><th>Benchmark</th><th>Gap ($/yr)</th><th>Worth of a 1% cut</th></tr></thead><tbody id="rows"></tbody></table></div>
+<p class="note">Gap = what you would save (or lose) by spending the benchmark share of your revenue on that line. Red means you spend more than the average restaurant. A gap is a question to look into, not proof of waste: a full-service place with table staff should pay more labour than a counter-service one.</p>
+</div>
 <div class="card panel3d">
 <div class="big" aria-live="polite">
 <div><b id="o-profit">-</b><span>your net profit</span></div>
@@ -78,9 +83,6 @@ button.i{min-height:0;width:17px;height:17px;padding:0;margin-left:6px;border:0;
 </div>
 </div>
 
-<h2>Line by line</h2>
-<div class="card"><table><thead><tr><th>Line</th><th>You</th><th>Benchmark</th><th>Gap ($/yr)</th><th>Worth of a 1% cut</th></tr></thead><tbody id="rows"></tbody></table></div>
-<p class="note">Gap = what you would save (or lose) by spending the benchmark share of your revenue on that line. Red means you spend more than the average restaurant. A gap is a question to look into, not proof of waste: a full-service place with table staff should pay more labour than a counter-service one.</p>
 
 <h2>How it works</h2>
 <ul>
