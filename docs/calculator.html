@@ -195,7 +195,7 @@ const cur=[...bShare,bProfit];let t0=null,onscreen=false,real={rev:B.rev,vals:L.
 function targets(){const s=window.calc3d||real;real=s;const r=s.rev;return r>0?[...s.vals.map(v=>Math.min(v/r,1.5)),Math.max(0,1-s.vals.reduce((a,b)=>a+b,0)/r)]:cur.map(()=>0);}
 // camera
 let yaw=.55,pitch=.35,dist=24,drag=null;
-stage.addEventListener("pointerdown",e=>{drag=[e.clientX,e.clientY];stage.setPointerCapture(e.pointerId);});
+stage.addEventListener("pointerdown",e=>{if(e.target.closest("button"))return;drag=[e.clientX,e.clientY];stage.setPointerCapture(e.pointerId);});
 stage.addEventListener("pointermove",e=>{if(!drag)return;yaw-=(e.clientX-drag[0])*.008;pitch=Math.min(1.2,Math.max(.05,pitch+(e.clientY-drag[1])*.006));drag=[e.clientX,e.clientY];});
 ["pointerup","pointercancel"].forEach(n=>stage.addEventListener(n,()=>drag=null));
 function resize(){const w=stage.clientWidth,h=stage.clientHeight;if(!w||!h)return;renderer.setSize(w,h);cam.aspect=w/h;cam.setViewOffset(w,h,Math.round(w*.14),0,w,h);cam.updateProjectionMatrix();}
@@ -211,7 +211,7 @@ stage.addEventListener("pointermove",e=>{
   else tip.innerHTML="<b>Profit</b><br>"+money(rev*cur[i])+" ("+pct(cur[i])+")";
   tip.hidden=false;tip.style.left=(e.clientX-r.left)+"px";tip.style.top=(e.clientY-r.top)+"px";
 });
-document.getElementById("replay3d").addEventListener("click",()=>{t0=performance.now();burst=false;});
+document.getElementById("replay3d").addEventListener("click",()=>{t0=performance.now();burst=false;coins.forEach(c=>scene.remove(c));coins.length=0;});
 if("IntersectionObserver" in window)new IntersectionObserver(es=>{onscreen=es[0].isIntersecting;if(onscreen&&t0===null){resize();t0=performance.now()-(still?6000:0);}},{threshold:.3}).observe(stage);
 else{onscreen=true;t0=performance.now()-(still?6000:0);}
 function frame(){
