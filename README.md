@@ -8,8 +8,7 @@
 | Page | What it does |
 |---|---|
 | [Dashboard](https://benshadabi.github.io/canadian-restaurant-profitability-benchmark/dashboard.html) | Six charts, sales since 1998 (animated), dark mode and tooltips |
-| [Calculator](https://benshadabi.github.io/canadian-restaurant-profitability-benchmark/calculator.html) | Compare your own restaurant's costs with the benchmark |
-| [3D calculator](https://benshadabi.github.io/canadian-restaurant-profitability-benchmark/calculator3d.html) | The same comparison as a 3D stack of costs; turns red when costs pass revenue |
+| [Calculator](https://benshadabi.github.io/canadian-restaurant-profitability-benchmark/calculator.html) | Compare your own restaurant's costs with the benchmark, with a 3D stack of costs that turns red when costs pass revenue |
 | [Stress test](https://benshadabi.github.io/canadian-restaurant-profitability-benchmark/stress.html) | Move food cost, wages, rent and sales and see the profit effect |
 | [Toronto side project](https://benshadabi.github.io/canadian-restaurant-profitability-benchmark/toronto.html) | Restaurant licences and closures by neighbourhood |
 | [Methodology](docs/methodology.md) | Sources, definitions and limits |
@@ -129,8 +128,7 @@ sql/run_queries.py                     loads the CSVs into SQLite, runs the quer
 analysis/toronto_download.py, build_toronto.py, build_toronto_charts.py, build_toronto_page.py   the Toronto side project (see above)
 docs/toronto.html                      Toronto neighbourhood page
 docs/stress.html                       cost-shock simulator with sliders and presets
-docs/calculator.html                   compare your own restaurant's numbers with the benchmark (runs in the browser)
-docs/calculator3d.html                 the same comparison as an animated 3D stack (three.js loaded from a CDN)
+docs/calculator.html                   compare your own restaurant's numbers with the benchmark, with a 3D view (runs in the browser; three.js from a CDN)
 docs/index.html, docs/dashboard.html   project page and dashboard (fonts/ holds the Geist font)
 docs/methodology.md                    definitions, sources, limitations
 requirements.txt                       pandas, matplotlib, tabulate, openpyxl

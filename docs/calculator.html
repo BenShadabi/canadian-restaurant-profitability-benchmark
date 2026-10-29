@@ -4,9 +4,9 @@
 <meta name="description" content="Type in your restaurant's yearly numbers and see how each cost line compares with the average Canadian restaurant (ISED, 2024). Runs in your browser; nothing is sent anywhere.">
 <style>
 @font-face{font-family:Geist;src:url(fonts/geist-latin-wght.woff2) format("woff2");font-weight:100 900;font-display:swap}
-:root{color-scheme:light dark;--ink:#0F1B2D;--muted:#4B5563;--grid:#D5DAE1;--bg:#F4F6F9;--card:#fff;--note:#FFF6E0;--gold:#B7791F;--link:#12355B;--bad:#B42318;--good:#1B7F4B;--r:10px;
+:root{color-scheme:light dark;--ink:#0F1B2D;--muted:#4B5563;--grid:#D5DAE1;--bg:#F4F6F9;--card:#fff;--note:#FFF6E0;--gold:#B7791F;--link:#12355B;--bad:#B42318;--good:#1B7F4B;--r:10px;--stage1:#fff;--stage2:#E9EDF2;--pill:rgba(255,255,255,.88);
 --sans:Geist,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-@media(prefers-color-scheme:dark){:root{--ink:#E8EEF6;--muted:#A7B4C6;--grid:#2A3750;--bg:#0A111F;--card:#111B2E;--note:#2A2412;--gold:#BF8420;--link:#9CC3F0;--bad:#F97066;--good:#4ADE80}}
+@media(prefers-color-scheme:dark){:root{--ink:#E8EEF6;--muted:#A7B4C6;--grid:#2A3750;--bg:#0A111F;--card:#111B2E;--note:#2A2412;--gold:#BF8420;--link:#9CC3F0;--bad:#F97066;--good:#4ADE80;--stage1:#16233A;--stage2:#0A111F;--pill:rgba(28,42,66,.88)}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 var(--sans);font-variant-numeric:tabular-nums}
 .wrap{max-width:780px;margin:0 auto;padding:0 20px}
@@ -29,6 +29,17 @@ th:first-child,td:first-child{text-align:left}th{color:var(--muted);font-weight:
 button{min-height:44px;padding:0 16px;font:inherit;font-weight:600;border-radius:8px;border:1px solid var(--link);background:transparent;color:var(--link);cursor:pointer}
 footer{color:var(--muted);font-size:.875rem;padding:24px 0 40px}
 @media(max-width:620px){.inputs,.big{grid-template-columns:1fr}}
+#card3d{padding:0;overflow:hidden}
+.stage3d{position:relative;height:480px;background:linear-gradient(180deg,var(--stage1),var(--stage2));touch-action:pan-y;cursor:grab}
+.stage3d:active{cursor:grabbing}.stage3d canvas{display:block;width:100%;height:100%}
+.lab3d{position:absolute;transform:translate(0,-50%);display:none;align-items:center;gap:7px;padding:4px 10px 4px 8px;border-radius:999px;background:var(--pill);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 2px 10px rgba(0,0,0,.14);font-size:12.5px;font-weight:500;color:var(--ink);white-space:nowrap;pointer-events:none}
+.lab3d i{width:9px;height:9px;border-radius:50%;flex:none}.lab3d b{font-weight:700}
+.badge3d{position:absolute;top:14px;right:14px;padding:6px 13px;border-radius:999px;background:var(--bad);color:#fff;font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(180,35,24,.35)}
+.leg3d{position:absolute;top:14px;left:16px;font-size:12.5px;line-height:1.6;color:var(--muted);pointer-events:none}
+.tip3d{position:absolute;transform:translate(12px,-120%);padding:8px 12px;border-radius:12px;background:rgba(20,22,28,.92);color:#fff;font-size:12.5px;line-height:1.45;pointer-events:none;white-space:nowrap;z-index:3}
+.rep3d{position:absolute;bottom:12px;right:14px;min-height:34px;padding:0 14px;font-size:.8125rem}
+.hint3d{margin:0;padding:10px 16px;font-size:.875rem;color:var(--muted);border-top:1px solid var(--grid)}
+@media(max-width:620px){.stage3d{height:400px}}
 </style><link rel="stylesheet" href="motion.css"></head><body>
 <header><div class="wrap"><p class="eyebrow">Student project by Ben Shadabi · Business Analytics (BBA), George Brown College</p>
 <h1>Compare your restaurant to the benchmark</h1>
@@ -44,6 +55,9 @@ footer{color:var(--muted);font-size:.875rem;padding:24px 0 40px}
 <label>All other expenses ($): insurance, marketing, fees, repairs, etc.<input id="other" type="number" inputmode="decimal" min="0" step="1000"></label>
 <div style="display:flex;align-items:end"><button id="reset" type="button">Reset to the benchmark average</button></div>
 </div></div>
+
+<div class="card" id="card3d"><div class="stage3d" id="stage3d"><div class="leg3d">Left: average restaurant<br>Right: yours<br>Gold plate = 100% of revenue<br>Red = costs above revenue</div><div id="badge3d" class="badge3d" hidden></div><div id="tip3d" class="tip3d" hidden></div><button id="replay3d" class="rep3d" type="button">Replay</button></div>
+<p class="hint3d">Your restaurant as a stack of costs. It follows the numbers above. Drag to turn it, hover a block for its dollars.</p></div>
 
 <div class="card"><div class="big" aria-live="polite">
 <div><b id="o-profit">-</b><span>your net profit</span></div>
@@ -61,7 +75,7 @@ footer{color:var(--muted);font-size:.875rem;padding:24px 0 40px}
 <li>Break-even revenue treats cost of sales as the only cost that moves with sales and every other cost as fixed: fixed costs divided by (1 minus cost of sales share). This is a simplification, since labour is partly variable.</li>
 <li>42.3% of restaurants in the same data lost money in 2024, and the bottom quarter averaged a $13,000 loss.</li>
 </ul>
-<p><a href="index.html">Back to the project page</a> · <a href="calculator3d.html">3D version</a> · <a href="dashboard.html">Dashboard</a> · <a href="https://github.com/BenShadabi/canadian-restaurant-profitability-benchmark">Code and data</a></p>
+<p><a href="index.html">Back to the project page</a> · <a href="dashboard.html">Dashboard</a> · <a href="https://github.com/BenShadabi/canadian-restaurant-profitability-benchmark">Code and data</a></p>
 </main>
 <footer><div class="wrap">Contains information licensed under the Open Government Licence - Canada. Font: Geist (SIL Open Font License). This is a comparison tool, not financial advice.</div></footer>
 <script src="motion.js" defer></script>
@@ -86,6 +100,7 @@ function render() {
     : profit < 0 ? "You lost money this year, like 42.3% of restaurants in the benchmark data."
     : profit / rev < BENCH.profit / BENCH.rev ? "You made a profit, but your margin is below the 2.5% benchmark average."
     : "Your margin is at or above the 2.5% benchmark average.";
+  window.calc3d = {rev, vals: costs};
   $("rows").innerHTML = LINES.map(([k, name], i) => {
     const share = rev ? costs[i] / rev : 0, b = BENCH[k] / BENCH.rev, gap = costs[i] - b * rev;
     const cls = rev ? (gap > 0 ? "bad" : "good") : "";
@@ -95,5 +110,113 @@ function render() {
 document.querySelectorAll("input").forEach(i => i.addEventListener("input", render));
 $("reset").addEventListener("click", () => { fill(); render(); });
 fill(); render();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// 3D view of the same numbers: reads window.calc3d, which render() above refreshes on every input.
+(function(){
+const card=document.getElementById("card3d"),stage=document.getElementById("stage3d");
+if(typeof THREE==="undefined"){card.hidden=true;return;}
+let renderer;try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});}catch(e){card.hidden=true;return;}
+const still=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const B={rev:849200,cos:380400,lab:200200,rent:71600,util:21500,amort:23200,profit:21500};
+B.other=B.rev-B.cos-B.lab-B.rent-B.util-B.amort-B.profit;
+const L=[["cos","Cost of sales","#D97757"],["lab","Labour","#2F6DB5"],["rent","Rent","#6C819A"],["util","Utilities","#E3B965"],["amort","Amortization","#0E2745"],["other","All other","#B4C0CF"]];
+const money=v=>(v<0?"-$":"$")+Math.abs(Math.round(v)).toLocaleString("en-CA"),pct=v=>(v*100).toFixed(1)+"%";
+const bShare=L.map(([k])=>B[k]/B.rev),bProfit=B.profit/B.rev,H=10,N=L.length;
+stage.insertBefore(renderer.domElement,stage.firstChild);
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(40,1,.1,100);
+scene.add(new THREE.AmbientLight(0xffffff,.75));
+const dl=new THREE.DirectionalLight(0xffffff,.7);dl.position.set(5,14,8);dl.castShadow=true;dl.shadow.mapSize.set(1024,1024);Object.assign(dl.shadow.camera,{left:-12,right:12,top:16,bottom:-4,near:1,far:50});dl.shadow.bias=-.0005;scene.add(dl);scene.add(new THREE.HemisphereLight(0xcfe3ff,0x8a7f70,.35));
+const GEO=new THREE.BoxGeometry(1,1,1);
+function tower(x,ghost){
+  const g=new THREE.Group();g.position.x=x;scene.add(g);
+  const blocks=[...L.map(l=>l[2]),"#1B7F5C"].map(c=>{
+    const m=new THREE.Mesh(GEO,new THREE.MeshStandardMaterial({color:c,transparent:ghost,opacity:ghost?.38:1,roughness:.5}));
+    m.scale.set(2.4,.001,2.4);m.castShadow=!ghost;
+    m.add(new THREE.LineSegments(new THREE.EdgesGeometry(GEO),new THREE.LineBasicMaterial({color:0x0b1220,transparent:true,opacity:ghost?.25:.45})));
+    g.add(m);return m;});
+  const roof=new THREE.Group();g.add(roof);
+  for(let i=0;i<6;i++){const st=new THREE.Mesh(new THREE.BoxGeometry(.5,.16,2.9),new THREE.MeshStandardMaterial({color:i%2?0xffffff:0xc0392b,transparent:ghost,opacity:ghost?.4:1}));st.position.set(-1.25+i*.5,.08,0);roof.add(st);}
+  const cone=new THREE.Mesh(new THREE.ConeGeometry(1.75,1,4),new THREE.MeshStandardMaterial({color:0x7a4a2b,transparent:ghost,opacity:ghost?.4:1}));cone.rotation.y=Math.PI/4;cone.position.y=.66;roof.add(cone);
+  return {blocks,roof};
+}
+const bT=tower(-2.8,true),yT=tower(2.8,false);
+const loss=new THREE.Mesh(GEO,new THREE.MeshStandardMaterial({color:0xB42318,transparent:true,opacity:.66,roughness:.5}));loss.scale.set(2.56,.001,2.56);loss.position.x=2.8;scene.add(loss);
+const plate=new THREE.Mesh(new THREE.BoxGeometry(9.5,.05,3.2),new THREE.MeshBasicMaterial({color:0xE3B965,transparent:true,opacity:.4}));plate.position.set(0,H,0);scene.add(plate);
+const COLS=[...L.map(l=>l[2]),"#1B7F5C"];
+const tags=[...L.map(l=>l[1]),"Profit"].map((n,i)=>{const d=document.createElement("div");d.className="lab3d";d.innerHTML='<i style="background:'+COLS[i]+'"></i><span>'+n+'</span> <b></b>';stage.appendChild(d);return d;});
+const badge=document.getElementById("badge3d"),tip=document.getElementById("tip3d");
+// food extras
+const FOODS=["🍕","🍔","🍣","🥗","🍜","🍩","🥐","🍷"];
+const emoTex={};function emo(ch){if(emoTex[ch])return emoTex[ch];const c=document.createElement("canvas");c.width=c.height=128;const x=c.getContext("2d");x.font="96px serif";x.textAlign="center";x.textBaseline="middle";x.fillText(ch,64,72);return emoTex[ch]=new THREE.CanvasTexture(c);}
+function emoSprite(ch,sz,op){const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:emo(ch),transparent:true,depthWrite:false,opacity:op||1}));sp.scale.set(sz,sz,1);return sp;}
+const puff=(()=>{const c=document.createElement("canvas");c.width=c.height=64;const x=c.getContext("2d"),g=x.createRadialGradient(32,32,2,32,32,30);g.addColorStop(0,"rgba(255,255,255,.9)");g.addColorStop(1,"rgba(255,255,255,0)");x.fillStyle=g;x.fillRect(0,0,64,64);return new THREE.CanvasTexture(c);})();
+const steam=[];[-2.8,2.8].forEach(tx=>{for(let i=0;i<10;i++){const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:puff,transparent:true,depthWrite:false,opacity:0}));sp.userData={tx,i};scene.add(sp);steam.push(sp);}});
+const floaters=FOODS.slice(0,4).map((f,i)=>{const s=emoSprite(f,.9,.4);s.userData={i};scene.add(s);return s;});
+const coins=[];let burst=false;
+const coinGeo=new THREE.CylinderGeometry(.22,.22,.06,18),coinMat=new THREE.MeshStandardMaterial({color:0xf2b632,metalness:.7,roughness:.25});
+function burstCoins(){for(let i=0;i<26;i++){const c=i%2?emoSprite(FOODS[i%FOODS.length],.9):new THREE.Mesh(coinGeo,coinMat);c.position.set(2.8,H*.5,0);
+  const a=Math.random()*6.28,s=3+Math.random()*5;c.userData={v:new THREE.Vector3(Math.cos(a)*s,6+Math.random()*7,Math.sin(a)*s),r:new THREE.Vector3(Math.random()*8,Math.random()*8,0),born:performance.now()};scene.add(c);coins.push(c);}}
+// motion helpers
+function bounce(x){x=Math.min(1,Math.max(0,x));const n=7.5625,d=2.75;if(x<1/d)return n*x*x;if(x<2/d)return n*(x-=1.5/d)*x+.75;if(x<2.5/d)return n*(x-=2.25/d)*x+.9375;return n*(x-=2.625/d)*x+.984375;}
+const outBack=x=>{x=Math.min(1,Math.max(0,x));const c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2);};
+const outCubic=x=>1-Math.pow(1-Math.min(1,Math.max(0,x)),3);
+function setStack(t,vals,time,off){let y=0;vals.forEach((v,i)=>{const h=Math.max(.001,v*H),d=.4+off+i*.28,p=bounce((time-d)/1.0);t.blocks[i].visible=time>d;t.blocks[i].scale.y=h;t.blocks[i].position.y=y+h/2+(1-p)*20;y+=h;});}
+// state: shares of revenue from the page inputs
+const cur=[...bShare,bProfit];let t0=null,onscreen=false,real={rev:B.rev,vals:L.map(([k])=>B[k])};
+function targets(){const s=window.calc3d||real;real=s;const r=s.rev;return r>0?[...s.vals.map(v=>Math.min(v/r,1.5)),Math.max(0,1-s.vals.reduce((a,b)=>a+b,0)/r)]:cur.map(()=>0);}
+// camera
+let yaw=.55,pitch=.35,dist=24,drag=null;
+stage.addEventListener("pointerdown",e=>{drag=[e.clientX,e.clientY];stage.setPointerCapture(e.pointerId);});
+stage.addEventListener("pointermove",e=>{if(!drag)return;yaw-=(e.clientX-drag[0])*.008;pitch=Math.min(1.2,Math.max(.05,pitch+(e.clientY-drag[1])*.006));drag=[e.clientX,e.clientY];});
+["pointerup","pointercancel"].forEach(n=>stage.addEventListener(n,()=>drag=null));
+function resize(){const w=stage.clientWidth,h=stage.clientHeight;if(!w||!h)return;renderer.setSize(w,h);cam.aspect=w/h;cam.setViewOffset(w,h,Math.round(w*.14),0,w,h);cam.updateProjectionMatrix();}
+addEventListener("resize",resize);
+const v3=new THREE.Vector3(),ray=new THREE.Raycaster(),mp=new THREE.Vector2();
+stage.addEventListener("pointermove",e=>{
+  if(drag){tip.hidden=true;return;}
+  const r=stage.getBoundingClientRect();mp.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);
+  ray.setFromCamera(mp,cam);const hit=ray.intersectObjects(yT.blocks,false)[0];
+  if(!hit){tip.hidden=true;return;}
+  const i=yT.blocks.indexOf(hit.object),rev=real.rev;
+  if(i<N){const v=real.vals[i],gap=v-bShare[i]*rev;tip.innerHTML="<b>"+L[i][1]+"</b><br>"+money(v)+" ("+pct(rev?v/rev:0)+")<br>"+(gap>0?"+":"")+money(gap)+" vs average";}
+  else tip.innerHTML="<b>Profit</b><br>"+money(rev*cur[i])+" ("+pct(cur[i])+")";
+  tip.hidden=false;tip.style.left=(e.clientX-r.left)+"px";tip.style.top=(e.clientY-r.top)+"px";
+});
+document.getElementById("replay3d").addEventListener("click",()=>{t0=performance.now();burst=false;});
+if("IntersectionObserver" in window)new IntersectionObserver(es=>{onscreen=es[0].isIntersecting;if(onscreen&&t0===null){resize();t0=performance.now()-(still?6000:0);}},{threshold:.3}).observe(stage);
+else{onscreen=true;t0=performance.now()-(still?6000:0);}
+function frame(){
+  requestAnimationFrame(frame);
+  if(!onscreen||document.hidden||t0===null)return;
+  if(!drag&&!still)yaw+=.0015;
+  const tg=targets();for(let i=0;i<cur.length;i++)cur[i]+=(tg[i]-cur[i])*.12;
+  const time=(performance.now()-t0)/1000;
+  setStack(bT,[...bShare,bProfit],time,0);setStack(yT,cur,time,.5);
+  const ov=Math.max(0,cur.slice(0,N).reduce((a,b)=>a+b,0)-1),isLoss=ov>.003&&real.rev>0;
+  loss.visible=isLoss&&time>1.5;loss.scale.y=Math.max(.001,ov*H);loss.position.y=H+ov*H/2;
+  plate.material.color.set(isLoss?0xB42318:0xE3B965);plate.material.opacity=isLoss?.55:.4;
+  const profit=real.rev-real.vals.reduce((a,b)=>a+b,0);badge.hidden=!(real.rev&&profit<0);badge.textContent="Losing "+money(-profit)+" a year";
+  bT.roof.scale.setScalar(Math.max(.001,outBack((time-3)/.6)));yT.roof.scale.setScalar(Math.max(.001,outBack((time-3.5)/.6)));
+  bT.roof.position.y=H*(bShare.reduce((a,b)=>a+b,0)+bProfit)+.02;yT.roof.position.y=H*cur.reduce((a,b)=>a+b,0)+.02;
+  const k=outCubic(time/4),dd=dist+(1-k)*24,yy=yaw+(1-k)*2.4;
+  cam.position.set(Math.sin(yy)*Math.cos(pitch)*dd,Math.sin(pitch)*dd+H*.45,Math.cos(yy)*Math.cos(pitch)*dd);cam.lookAt(0,H*.45,0);
+  if(time>4.1&&!burst){burst=true;if(!still)burstCoins();}
+  for(let i=coins.length-1;i>=0;i--){const c=coins[i],u=c.userData,dt=.016;u.v.y-=18*dt;c.position.addScaledVector(u.v,dt);c.rotation.x+=u.r.x*dt;c.rotation.y+=u.r.y*dt;
+    if(c.position.y<0){c.position.y=0;u.v.y*=-.35;u.v.x*=.7;u.v.z*=.7;}if(performance.now()-u.born>3200){scene.remove(c);coins.splice(i,1);}}
+  renderer.render(scene,cam);
+  const w=stage.clientWidth,h=stage.clientHeight;let y=0;const rt=new THREE.Vector3(1,0,0).applyQuaternion(cam.quaternion),items=[];
+  cur.forEach((v,i)=>{const hh=v*H;v3.set(2.8,y+hh/2,0).addScaledVector(rt,1.5).project(cam);y+=hh;items.push({i,top:(1-v3.y)/2*h,left:(v3.x+1)/2*w+10,v});});
+  items.sort((a,b)=>a.top-b.top);for(let j=1;j<items.length;j++)if(items[j].top<items[j-1].top+27)items[j].top=items[j-1].top+27;
+  items.forEach(o=>{const el=tags[o.i],last=o.i===N;el.style.display=time>3.2?"flex":"none";el.style.left=Math.max(6,Math.min(o.left,w-el.offsetWidth-8))+"px";el.style.top=o.top+"px";
+    if(last){el.children[0].style.background=isLoss?"#B42318":"#1B7F5C";el.children[1].textContent=isLoss?"Loss":"Profit";}
+    el.lastChild.textContent=last&&isLoss?"-"+pct(ov):pct(o.v);});
+  steam.forEach(sp=>{const u=sp.userData,top=(u.tx<0?bT:yT).roof.position.y+1.1,ph=((time*.45+u.i/10)%1);sp.position.set(u.tx+.7+Math.sin(time+u.i)*.25*ph,top+ph*3.2,.5);const sc=.5+ph*1.4;sp.scale.set(sc,sc,1);sp.material.opacity=time>3.8&&!still?.4*(1-ph)*(1-ph*.2):0;});
+  floaters.forEach(f=>{const i=f.userData.i,a=i/4*6.283+time*.05,r=11+Math.sin(time*.2+i)*.5;f.position.set(Math.cos(a)*r,3.5+(i%2)*4+Math.sin(time*.35+i)*.4,Math.sin(a)*r*.7);f.material.opacity=still?0:Math.min(.4,Math.max(0,(time-4)/2)*.4);});
+}
+resize();frame();
+})();
 </script>
 </body></html>
