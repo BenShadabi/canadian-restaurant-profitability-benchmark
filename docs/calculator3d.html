@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3D calculator (preview) | Ben Shadabi</title>
+<style>
+@font-face{font-family:Geist;src:url(fonts/geist-latin-wght.woff2) format("woff2");font-weight:100 900;font-display:swap}
+:root{color-scheme:light dark;--ink:#0F1B2D;--muted:#4B5563;--bg:#F4F6F9;--card:#fff;--line:#D5DAE1;--stage1:#ffffff;--stage2:#E9EDF2;--bad:#B42318;--good:#1B7F5C;--btn:#0E2745;--btnfg:#fff;--gold:#E3B965;--pill:rgba(255,255,255,.88);--shadow:0 10px 40px rgba(15,27,45,.08);--sans:Geist,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+@media(prefers-color-scheme:dark){:root{--ink:#E8EEF6;--muted:#A7B4C6;--bg:#0A111F;--card:#111B2E;--line:#2A3750;--stage1:#16233A;--stage2:#0A111F;--bad:#F0857C;--good:#3FB68B;--btn:#9CC3F0;--btnfg:#0F1B2D;--pill:rgba(28,42,66,.88);--shadow:0 10px 40px rgba(0,0,0,.5)}}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--sans);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+header{background:#0E2745;color:#fff;border-bottom:4px solid #E3B965;padding:36px 0 28px}
+.hw{max-width:1120px;margin:auto;padding:0 24px}
+.kicker{margin:0 0 12px;font-size:.8125rem;letter-spacing:.12em;text-transform:uppercase;color:#E3B965;font-weight:600}
+h1{margin:0;color:#fff;font-size:clamp(1.8rem,4.6vw,2.9rem);font-weight:650;letter-spacing:-.02em;line-height:1.08;max-width:20ch;animation:rise .9s cubic-bezier(.2,.9,.2,1) both}
+header p.sub{margin:12px 0 0;color:#C9D8EA;font-size:1.05rem;max-width:46ch;line-height:1.4;animation:rise .9s .15s cubic-bezier(.2,.9,.2,1) both}
+.wrap{max-width:1120px;margin:auto;padding:16px 24px 48px;display:grid;grid-template-columns:1.4fr 1fr;gap:20px}
+@media(max-width:860px){.wrap{grid-template-columns:1fr}}
+#stage{position:relative;height:560px;background:linear-gradient(180deg,var(--stage1),var(--stage2));border-radius:24px;overflow:hidden;touch-action:none;cursor:grab;box-shadow:var(--shadow);animation:pop .9s cubic-bezier(.2,.9,.2,1) both}
+#stage:active{cursor:grabbing}
+canvas{display:block;width:100%;height:100%}
+.lab{position:absolute;transform:translate(0,-50%);display:flex;align-items:center;gap:7px;padding:5px 11px 5px 9px;border-radius:999px;background:var(--pill);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 2px 10px rgba(0,0,0,.12);font-size:12.5px;font-weight:500;color:var(--ink);white-space:nowrap;pointer-events:none;letter-spacing:-.01em}
+.lab i{width:9px;height:9px;border-radius:50%;flex:none}
+.lab b{font-weight:700;font-variant-numeric:tabular-nums}
+.tag{position:absolute;transform:translate(-50%,-50%);font-size:12px;color:#fff;pointer-events:none;white-space:nowrap;z-index:3}
+.cap{position:absolute;bottom:12px;left:18px;font-size:12px;color:var(--muted)}
+.leg{position:absolute;top:16px;left:18px;font-size:12.5px;color:var(--muted);line-height:1.7}
+.panel{background:var(--card);border-radius:24px;padding:22px 22px 20px;box-shadow:var(--shadow);animation:slide 1s 1.2s cubic-bezier(.2,.9,.2,1) both}
+.panel label{display:block;font-size:.9rem;margin:16px 0 0;font-weight:500}
+.panel label span{float:right;color:var(--muted);font-variant-numeric:tabular-nums;font-weight:400}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;margin:12px 0 4px;border-radius:2px;background:var(--line);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.35),0 0 0 .5px rgba(0,0,0,.1);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border:0;border-radius:50%;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.35);cursor:pointer}
+input[type=number]{width:100%;margin-top:6px;padding:11px 14px;border:0;border-radius:12px;background:var(--bg);color:var(--ink);font:inherit;font-size:1rem}
+.out{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 6px}
+.out b{display:block;font-size:2rem;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.out span{font-size:.8rem;color:var(--muted)}
+.good{color:var(--good)}.bad{color:var(--bad)}
+button{padding:10px 18px;border:0;border-radius:999px;background:var(--line);color:var(--ink);font:inherit;font-size:.9rem;font-weight:500;cursor:pointer;transition:transform .15s,opacity .15s}
+button:hover{opacity:.8}button:active{transform:scale(.96)}
+#replay{background:var(--btn);color:var(--btnfg)}
+.badge{position:absolute;top:14px;right:16px;padding:7px 13px;border-radius:999px;background:var(--bad);color:#fff;font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(180,35,24,.35);animation:pop .4s cubic-bezier(.3,1.6,.5,1)}
+#verdict{font-size:.92rem;margin:8px 0 0;color:var(--muted);line-height:1.4}
+.note{font-size:.78rem;color:var(--muted);margin-top:14px;line-height:1.45}
+.ic{display:inline-block;font-style:normal;margin-right:2px}
+.ic.pop{animation:icpop .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes icpop{0%{transform:scale(1)}40%{transform:scale(1.6) rotate(-12deg)}100%{transform:scale(1)}}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes slide{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+:root[data-theme="dark"]{color-scheme:dark;--ink:#E8EEF6;--muted:#A7B4C6;--bg:#0A111F;--card:#111B2E;--line:#2A3750;--stage1:#16233A;--stage2:#0A111F;--bad:#F0857C;--good:#3FB68B;--btn:#9CC3F0;--btnfg:#0F1B2D;--pill:rgba(28,42,66,.88);--shadow:0 10px 40px rgba(0,0,0,.5)}
+button.i{width:17px;height:17px;border-radius:50%;padding:0;margin-left:6px;background:var(--line);color:var(--muted);font:600 11px/17px var(--sans);vertical-align:1px}
+.info{margin:8px 0 0;padding:10px 12px;border-radius:12px;background:var(--bg);font-size:.82rem;color:var(--muted);line-height:1.45}
+</style></head><body>
+<header><div class="hw"><p class="kicker">Canadian Restaurant Profitability Benchmark</p>
+<h1>Your restaurant as a 3D stack of costs</h1>
+<p class="sub">Each block is a cost line as a share of revenue. The faint tower is the Canadian average (2024). Drag the picture to turn it.</p></div></header>
+<div class="wrap">
+<div id="stage"><div id="badge" class="badge" hidden></div><div class="leg">Left: average restaurant<br>Right: yours<br>Gold plate = 100% of revenue<br>Red = costs above revenue</div><div id="tip" class="tag" style="display:none;background:rgba(20,22,28,.9);padding:8px 12px;border-radius:12px;line-height:1.45;transform:translate(12px,-120%);font-weight:500"></div><div class="cap">Same numbers as the 2D calculator. Benchmark: ISED, NAICS 7225.</div></div>
+<div class="panel">
+<div class="out">
+<div><b id="o-profit">-</b><span>your profit</span></div>
+<div><b id="o-margin">-</b><span>net margin (average 2.5%) <button type="button" class="i" data-k="margin" aria-label="What is net margin?" aria-expanded="false">i</button></span></div>
+</div>
+<div class="info" id="info-margin" hidden>Profit as a share of revenue: what is left of each dollar sold after every cost. The average Canadian restaurant keeps 2.5 cents.</div>
+<p id="verdict"></p>
+<label>Yearly revenue ($)<input id="rev" type="number" min="0" step="10000"></label>
+<div id="sliders"></div>
+<p style="margin-top:12px"><button id="reset" type="button">Reset to the average</button> <button id="replay" type="button">Replay intro</button></p>
+<p class="note">Slide a cost and watch the green profit block grow or shrink. Not advice: a gap is a question to look into, not proof of waste.</p>
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const BENCH={rev:849200,cos:380400,lab:200200,rent:71600,util:21500,amort:23200,profit:21500};
+BENCH.other=BENCH.rev-BENCH.cos-BENCH.lab-BENCH.rent-BENCH.util-BENCH.amort-BENCH.profit;
+const LINES=[["cos","Cost of sales","#D97757","🥩","The cost of the food and drink you sell: ingredients and what goes into each dish. It is usually the biggest line."],["lab","Labour","#2F6DB5","👨‍🍳"],["rent","Rent","#6C819A","🏠"],["util","Utilities","#E3B965","💡"],["amort","Amortization","#0E2745","🍳","Equipment and renovations spread over the years they last. It is an accounting cost, so no cash leaves in that year."],["other","All other","#B4C0CF","🧾","Everything not listed above: insurance, marketing, card and delivery fees, repairs and so on. In the benchmark this line is calculated (revenue minus every listed cost and profit), not a published figure."]];
+const $=id=>document.getElementById(id);
+const money=v=>(v<0?"-$":"$")+Math.abs(Math.round(v)).toLocaleString("en-CA");
+const pct=v=>(v*100).toFixed(1)+"%";
+// state: shares of revenue
+const bShare={};LINES.forEach(([k])=>bShare[k]=BENCH[k]/BENCH.rev);
+const mine={...bShare};let rev=BENCH.rev;
+// sliders
+$("sliders").innerHTML=LINES.map(([k,n,,ic,info])=>`<label><i class="ic" id="ic-${k}">${ic}</i> ${n}${info?`<button type="button" class="i" data-k="${k}" aria-label="What is ${n}?" aria-expanded="false">i</button>`:""}<span id="v-${k}"></span><input type="range" id="s-${k}" min="0" max="0.6" step="0.001"></label>${info?`<div class="info" id="info-${k}" hidden>${info}</div>`:""}`).join("");
+function syncUI(){
+  $("rev").value=Math.round(rev);
+  LINES.forEach(([k])=>{$("s-"+k).value=mine[k];});
+  update();
+}
+function update(){
+  const T=LINES.reduce((a,[k])=>a+mine[k],0), profit=rev*(1-T);
+  LINES.forEach(([k])=>$("v-"+k).textContent=pct(mine[k])+" · "+money(mine[k]*rev));
+  $("o-profit").textContent=money(profit);$("o-profit").className=profit<0?"bad":"good";
+  $("badge").hidden=!(rev&&profit<0);$("badge").textContent="Losing "+money(-profit)+" a year";
+  $("o-margin").textContent=rev?pct(1-T):"-";
+  $("verdict").textContent=!rev?"Enter your revenue to start.":profit<0?"You lost money this year, like 42.3% of restaurants in the benchmark data.":(1-T)<BENCH.profit/BENCH.rev?"A profit, but below the 2.5% average.":"At or above the 2.5% average margin.";
+  target=LINES.map(([k])=>mine[k]);targetProfit=Math.max(0,1-T);
+}
+document.querySelectorAll("button.i").forEach(b=>b.addEventListener("click",e=>{e.preventDefault();const d=$("info-"+b.dataset.k);d.hidden=!d.hidden;b.setAttribute("aria-expanded",String(!d.hidden));}));
+const pop={};
+LINES.forEach(([k])=>$("s-"+k).addEventListener("input",e=>{mine[k]=parseFloat(e.target.value);update();pop[k]=performance.now();const ic=$("ic-"+k);ic.classList.remove("pop");void ic.offsetWidth;ic.classList.add("pop");}));
+$("rev").addEventListener("input",e=>{rev=Math.max(0,parseFloat(e.target.value)||0);update();});
+$("replay").addEventListener("click",()=>{t0=performance.now();burst=false;});
+$("reset").addEventListener("click",()=>{LINES.forEach(([k])=>mine[k]=bShare[k]);rev=BENCH.rev;syncUI();});
+
+// ---- three.js ----
+const H=10, stage=$("stage");
+const scene=new THREE.Scene();
+const cam=new THREE.PerspectiveCamera(40,1,.1,100);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;stage.appendChild(renderer.domElement);
+scene.add(new THREE.AmbientLight(0xffffff,.75));
+const dl=new THREE.DirectionalLight(0xffffff,.7);dl.position.set(5,14,8);dl.castShadow=true;dl.shadow.mapSize.set(2048,2048);Object.assign(dl.shadow.camera,{left:-12,right:12,top:16,bottom:-4,near:1,far:50});dl.shadow.bias=-.0005;scene.add(dl);scene.add(new THREE.HemisphereLight(0xcfe3ff,0x8a7f70,.35));
+const GEO=new THREE.BoxGeometry(1,1,1);
+function tower(x,ghost){
+  const g=new THREE.Group();g.position.x=x;scene.add(g);
+  const blocks=[...LINES.map(([,,c])=>c),"#1B7F5C"].map(c=>{
+    const m=new THREE.Mesh(GEO,new THREE.MeshStandardMaterial({color:c,transparent:ghost,opacity:ghost?.38:1,roughness:.5}));
+    m.scale.set(2.4,.001,2.4);m.castShadow=!ghost;m.receiveShadow=true;
+    m.add(new THREE.LineSegments(new THREE.EdgesGeometry(GEO),new THREE.LineBasicMaterial({color:0x0b1220,transparent:true,opacity:ghost?.25:.45})));
+    g.add(m);return m;});
+  const roof=new THREE.Group();g.add(roof);
+  for(let i=0;i<6;i++){const st=new THREE.Mesh(new THREE.BoxGeometry(.5,.16,2.9),new THREE.MeshStandardMaterial({color:i%2?0xffffff:0xc0392b,transparent:ghost,opacity:ghost?.4:1}));st.position.set(-1.25+i*.5,.08,0);st.castShadow=!ghost;roof.add(st);}
+  const cone=new THREE.Mesh(new THREE.ConeGeometry(1.75,1,4),new THREE.MeshStandardMaterial({color:0x7a4a2b,transparent:ghost,opacity:ghost?.4:1}));cone.rotation.y=Math.PI/4;cone.position.y=.66;cone.castShadow=!ghost;roof.add(cone);
+  return {g,blocks,roof};
+}
+const bT=tower(-2.8,true), yT=tower(2.8,false);
+const loss=new THREE.Mesh(GEO,new THREE.MeshStandardMaterial({color:0xB42318,transparent:true,opacity:.66,roughness:.5}));loss.scale.set(2.56,.001,2.56);loss.position.x=2.8;loss.castShadow=true;scene.add(loss);
+// revenue plate
+const plate=new THREE.Mesh(new THREE.BoxGeometry(9.5,.05,3.2),new THREE.MeshBasicMaterial({color:0xE3B965,transparent:true,opacity:.35}));
+plate.position.set(0,H,0);scene.add(plate);
+// labels
+const COLS=[...LINES.map(l=>l[2]),"#1B7F5C"];
+const tags=[...LINES.map(([,n])=>n),"Profit"].map((n,i)=>{const d=document.createElement("div");d.className="lab";d.innerHTML=`<i style="background:${COLS[i]}"></i><span>${n}</span> <b></b>`;stage.appendChild(d);return d;});
+let target=LINES.map(([k])=>bShare[k]),targetProfit=BENCH.profit/BENCH.rev;
+const cur=[...target,targetProfit];
+function bounce(x){x=Math.min(1,Math.max(0,x));const n=7.5625,d=2.75;if(x<1/d)return n*x*x;if(x<2/d)return n*(x-=1.5/d)*x+.75;if(x<2.5/d)return n*(x-=2.25/d)*x+.9375;return n*(x-=2.625/d)*x+.984375;}
+const outBack=x=>{x=Math.min(1,Math.max(0,x));const c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2);};
+const outCubic=x=>1-Math.pow(1-Math.min(1,Math.max(0,x)),3);
+let t0=performance.now();
+function setStack(t,vals,time,off){let y=0;vals.forEach((v,i)=>{const h=Math.max(.001,v*H),d=.4+off+i*.28,p=bounce((time-d)/1.0);
+  t.blocks[i].visible=time>d;t.blocks[i].scale.y=h;t.blocks[i].position.y=y+h/2+(1-p)*20;y+=h;});}
+// camera orbit by drag
+let yaw=.55,pitch=.35,dist=24,drag=null;
+stage.addEventListener("pointerdown",e=>{drag=[e.clientX,e.clientY];stage.setPointerCapture(e.pointerId);});
+stage.addEventListener("pointermove",e=>{if(!drag)return;yaw-=(e.clientX-drag[0])*.008;pitch=Math.min(1.2,Math.max(.05,pitch+(e.clientY-drag[1])*.006));drag=[e.clientX,e.clientY];});
+stage.addEventListener("pointerup",()=>drag=null);
+stage.addEventListener("wheel",e=>{e.preventDefault();dist=Math.min(40,Math.max(14,dist+e.deltaY*.02));},{passive:false});
+function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h);cam.aspect=w/h;cam.setViewOffset(w,h,Math.round(w*.14),0,w,h);cam.updateProjectionMatrix();}
+addEventListener("resize",resize);
+const v3=new THREE.Vector3(),ray=new THREE.Raycaster(),mp=new THREE.Vector2(),tip=$("tip");
+stage.addEventListener("pointermove",e=>{
+  if(drag){tip.style.display="none";return;}
+  const r=stage.getBoundingClientRect();mp.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);
+  ray.setFromCamera(mp,cam);const hit=ray.intersectObjects(yT.blocks,false)[0];
+  if(!hit){tip.style.display="none";return;}
+  const i=yT.blocks.indexOf(hit.object);
+  if(i<LINES.length){const k=LINES[i][0],gap=mine[k]*rev-bShare[k]*rev;tip.innerHTML=`<b>${LINES[i][1]}</b><br>${money(mine[k]*rev)} (${pct(mine[k])})<br>${gap>0?"+":""}${money(gap)} vs average`;}
+  else{tip.innerHTML=`<b>Profit</b><br>${money(rev*cur[i])} (${pct(cur[i])})`;}
+  tip.style.display="block";tip.style.left=(e.clientX-r.left)+"px";tip.style.top=(e.clientY-r.top)+"px";
+});
+const FOODS=["🍕","🍔","🍣","🥗","🍜","🍩","🥐","🍷"];
+const emoTex={};function emo(ch){if(emoTex[ch])return emoTex[ch];const c=document.createElement("canvas");c.width=c.height=128;const x=c.getContext("2d");x.font="96px serif";x.textAlign="center";x.textBaseline="middle";x.fillText(ch,64,72);return emoTex[ch]=new THREE.CanvasTexture(c);}
+function emoSprite(ch,sz,op){const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:emo(ch),transparent:true,depthWrite:false,opacity:op||1}));sp.scale.set(sz,sz,1);return sp;}
+const puff=(()=>{const c=document.createElement("canvas");c.width=c.height=64;const x=c.getContext("2d"),g=x.createRadialGradient(32,32,2,32,32,30);g.addColorStop(0,"rgba(255,255,255,.9)");g.addColorStop(1,"rgba(255,255,255,0)");x.fillStyle=g;x.fillRect(0,0,64,64);return new THREE.CanvasTexture(c);})();
+const steam=[];[-2.8,2.8].forEach(tx=>{for(let i=0;i<10;i++){const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:puff,transparent:true,depthWrite:false,opacity:0}));sp.userData={tx,i};scene.add(sp);steam.push(sp);}});
+const floaters=FOODS.slice(0,4).map((f,i)=>{const s=emoSprite(f,.9,.4);s.userData={i};scene.add(s);return s;});
+const coins=[];let burst=false;
+const coinGeo=new THREE.CylinderGeometry(.22,.22,.06,18),coinMat=new THREE.MeshStandardMaterial({color:0xf2b632,metalness:.7,roughness:.25});
+function burstCoins(){for(let i=0;i<26;i++){const c=i%2?emoSprite(FOODS[i%FOODS.length],.9):new THREE.Mesh(coinGeo,coinMat);c.position.set(2.8,H*.5,0);c.castShadow=true;
+  const a=Math.random()*6.28,s=3+Math.random()*5;c.userData={v:new THREE.Vector3(Math.cos(a)*s,6+Math.random()*7,Math.sin(a)*s),r:new THREE.Vector3(Math.random()*8,Math.random()*8,0),born:performance.now()};scene.add(c);coins.push(c);}}
+function frame(){
+  if(!drag)yaw+=.0015;
+  const tg=[...target,targetProfit];
+  for(let i=0;i<cur.length;i++)cur[i]+=(tg[i]-cur[i])*.12;
+  const time=(performance.now()-t0)/1000;
+  setStack(bT,[...LINES.map(([k])=>bShare[k]),BENCH.profit/BENCH.rev],time,0);
+  setStack(yT,cur,time,.5);
+  const ov=Math.max(0,cur.slice(0,LINES.length).reduce((a,b)=>a+b,0)-1),isLoss=ov>.003;
+  loss.visible=isLoss&&time>1.5;loss.scale.y=Math.max(.001,ov*H);loss.position.y=H+ov*H/2;
+  plate.material.color.set(isLoss?0xB42318:0xE3B965);plate.material.opacity=isLoss?.55:.4;
+  const rb=outBack((time-3.0)/.6),ry=outBack((time-3.5)/.6);bT.roof.scale.setScalar(Math.max(.001,rb));yT.roof.scale.setScalar(Math.max(.001,ry));
+  bT.roof.position.y=H*(BENCH.rev-BENCH.rev+LINES.reduce((a,[k])=>a+bShare[k],0)+BENCH.profit/BENCH.rev)+.02;
+  yT.roof.position.y=H*cur.reduce((a,b)=>a+b,0)+.02;
+  const k=outCubic(time/4),dd=dist+(1-k)*24,yy=yaw+(1-k)*2.4;
+  cam.position.set(Math.sin(yy)*Math.cos(pitch)*dd,Math.sin(pitch)*dd+H*.45,Math.cos(yy)*Math.cos(pitch)*dd);
+  cam.lookAt(0,H*.45,0);
+  if(time>4.1&&!burst){burst=true;burstCoins();}
+  for(let i=coins.length-1;i>=0;i--){const c=coins[i],u=c.userData,dt=.016;u.v.y-=18*dt;c.position.addScaledVector(u.v,dt);c.rotation.x+=u.r.x*dt;c.rotation.y+=u.r.y*dt;
+    if(c.position.y<0){c.position.y=0;u.v.y*=-.35;u.v.x*=.7;u.v.z*=.7;}
+    if(performance.now()-u.born>3200){scene.remove(c);coins.splice(i,1);}}
+  renderer.render(scene,cam);
+  // labels on your tower
+  const w=stage.clientWidth,h=stage.clientHeight;let y=0;const rt=new THREE.Vector3(1,0,0).applyQuaternion(cam.quaternion),items=[];
+  cur.forEach((v,i)=>{const hh=v*H;v3.set(2.8,y+hh/2,0).addScaledVector(rt,1.5).project(cam);y+=hh;items.push({i,top:(1-v3.y)/2*h,left:(v3.x+1)/2*w+10,v});});
+  items.sort((a,b)=>a.top-b.top);for(let j=1;j<items.length;j++)if(items[j].top<items[j-1].top+27)items[j].top=items[j-1].top+27;
+  items.forEach(o=>{const el=tags[o.i];el.style.display=time>3.2?"flex":"none";el.style.left=Math.max(6,Math.min(o.left,w-el.offsetWidth-8))+"px";el.style.top=o.top+"px";const isP=o.i===LINES.length&&isLoss;el.children[0].style.background=o.i===LINES.length?(isLoss?"#B42318":"#1B7F5C"):COLS[o.i];if(o.i===LINES.length)el.children[1].textContent=isLoss?"Loss":"Profit";el.lastChild.textContent=isP?"-"+pct(ov):pct(o.v);});
+  steam.forEach(sp=>{const u=sp.userData,top=(u.tx<0?bT:yT).roof.position.y+1.1,ph=((time*.45+u.i/10)%1);
+    sp.position.set(u.tx+.7+Math.sin(time+u.i)*.25*ph,top+ph*3.2,.5);const sc=.5+ph*1.4;sp.scale.set(sc,sc,1);sp.material.opacity=time>3.8?.4*(1-ph)*(1-ph*.2):0;});
+  floaters.forEach(f=>{const i=f.userData.i,a=i/4*6.283+time*.05,r=11+Math.sin(time*.2+i)*.5;f.position.set(Math.cos(a)*r,3.5+(i%2)*4+Math.sin(time*.35+i)*.4,Math.sin(a)*r*.7);f.material.opacity=Math.min(.4,Math.max(0,(time-4)/2)*.4);});
+  requestAnimationFrame(frame);
+}
+resize();syncUI();frame();
+</script>
+</body></html>
