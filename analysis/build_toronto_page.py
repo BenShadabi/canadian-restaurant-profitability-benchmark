@@ -120,6 +120,17 @@ svg#map{width:100%;height:auto;display:block}
 svg#map path{fill:var(--none);stroke:var(--stroke);stroke-width:.8;cursor:pointer;transition:fill .5s ease,opacity .2s,stroke .2s}
 svg#map path:hover,svg#map path.sel{stroke:var(--gold);stroke-width:2.4}
 svg#map.dim path:not(.sel):not(:hover){opacity:.55}
+.mapwrap{position:relative;overflow:hidden;border-radius:calc(var(--r) - 2px);cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none}.mapwrap.drag{cursor:grabbing}
+svg#map path{vector-effect:non-scaling-stroke}
+.zoomctl{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:6px;z-index:2}
+.zoomctl button{width:38px;height:38px;padding:0;border-radius:999px;border:1px solid var(--link);background:var(--card);color:var(--link);display:grid;place-items:center;cursor:pointer;transition:background .2s,color .2s}
+.zoomctl button:hover{background:var(--link);color:var(--card)}.zoomctl button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}.zoomctl svg{width:16px;height:16px}
+.zoomtag{position:absolute;left:10px;bottom:10px;padding:4px 10px;border-radius:999px;background:var(--card);border:1px solid var(--grid);font-size:.75rem;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;pointer-events:none}
+.mapnote{font-size:.8125rem;color:var(--muted);margin:8px 0 0}
+#labels text{font:600 11px var(--sans);fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:3px;stroke-linejoin:round;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.strip{margin:16px 0 0}.strip small{display:block;color:var(--muted);font-size:.8125rem;margin:0 0 4px}.strip svg{width:100%;height:auto;display:block}
+.strip .base{stroke:var(--grid);stroke-width:2}.strip .tk{stroke:var(--soft,#6C819A);stroke-width:1;opacity:.45}.strip .city{stroke:var(--ink);stroke-width:1.5;stroke-dasharray:3 2}.strip .me{fill:var(--gold);stroke:var(--card);stroke-width:2}
+.strip text{font:600 9px var(--sans);fill:var(--muted)}
 .legend{display:flex;align-items:center;gap:10px;font-size:.8125rem;color:var(--muted);margin-top:6px}.legend i{flex:1;height:8px;border-radius:4px;max-width:260px}
 .panel{padding:20px;position:sticky;top:16px}.panel h3{font:700 1.25rem/1.2 var(--sans);margin:0 0 4px}.panel .hint{color:var(--muted);font-size:.9375rem;margin:0}
 .kv{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin:14px 0 0;font-size:.9375rem}.kv dt{color:var(--muted)}.kv dd{margin:0;font-weight:650;text-align:right}
@@ -157,11 +168,12 @@ footer{color:var(--muted);font-size:.875rem;padding:30px 0 48px}
 <div class="callout"><p class="note"><strong>Read this first.</strong> The national benchmark on the <a href="index.html">project page</a> comes from Statistics Canada and ISED financial data. Nobody publishes profit for a Toronto neighbourhood, so this page does not estimate it. It only counts licences: how many there are per resident, and how many ended. A licence ending is not always a failed restaurant (see the limits below).</p></div>
 
 <h2 class="rv">Explore the map</h2>
-<p class="sub rv">Switch the measure, hover or tap a neighbourhood, or search for yours.</p>
+<p class="sub rv">Switch the measure, zoom in, hover or tap a neighbourhood, or search for yours.</p>
 <div class="mapgrid rv">
 <div class="card mapcard">
 <div class="seg" role="group" aria-label="Measure"><button id="m-d" aria-pressed="true">Restaurants per 1,000 residents</button><button id="m-e" aria-pressed="false">Licences that ended, 2023 to 2025</button></div>
-<svg id="map" viewBox="0 0 %%W%% %%H%%" role="img" aria-label="Map of Toronto's 158 neighbourhoods coloured by the selected measure. The same numbers are in the table below.">%%PATHS%%</svg>
+<div class="mapwrap" id="mapwrap"><svg id="map" viewBox="0 0 %%W%% %%H%%" role="img" aria-label="Map of Toronto's 158 neighbourhoods coloured by the selected measure. The same numbers are in the table below.">%%PATHS%%<g id="labels"></g></svg><div class="zoomctl" role="group" aria-label="Map zoom"><button id="z-in" type="button" aria-label="Zoom in"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg></button><button id="z-out" type="button" aria-label="Zoom out"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 8h10"/></svg></button><button id="z-reset" type="button" aria-label="Show the whole city"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 6V2.5H6M13.5 6V2.5H10M2.5 10v3.5H6M13.5 10v3.5H10"/></svg></button></div><span class="zoomtag" id="zoomtag" aria-live="polite">Whole city</span></div>
+<p class="mapnote">Drag to move the map. Zoom with the buttons, a pinch, or Ctrl or Cmd with the scroll wheel. Double-click a neighbourhood to zoom to it; names appear as you zoom in.</p>
 <div class="legend"><span id="lg-lo"></span><i id="lg-bar"></i><span id="lg-hi"></span></div>
 <p class="sub" id="lg-note" style="margin:8px 0 0;font-size:.875rem"></p>
 </div>
@@ -169,6 +181,7 @@ footer{color:var(--muted);font-size:.875rem;padding:30px 0 48px}
 <input class="search" id="find" list="names" placeholder="Find a neighbourhood" aria-label="Find a neighbourhood"><datalist id="names"></datalist>
 <h3 id="p-name">Pick a neighbourhood</h3><p class="hint" id="p-hint">Hover over the map or search above.</p>
 <dl class="kv" id="p-kv"></dl>
+<div class="strip" id="p-strip"></div>
 </aside>
 </div>
 <div class="tip" id="tip" role="tooltip"></div>
@@ -229,11 +242,54 @@ function paint(){
   $("lg-bar").style.background="linear-gradient(90deg,"+a[0]+","+a[1]+")";
   $("lg-lo").textContent=mode==="d"?"0":pct(minR); $("lg-hi").textContent=mode==="d"?maxD.toFixed(1)+" per 1,000":pct(maxR);
   $("lg-note").textContent=mode==="d"?"Downtown cores look high because many customers do not live there.":"Grey = fewer than 50 licences, too few to compare. Licence data, not profit.";
+  if(sel)show(byC[sel]);
 }
+// ---- zoom, pan, labels and richer details ----
+const mapEl=$("map"), wrap=$("mapwrap"), VB=mapEl.getAttribute("viewBox").split(" ").map(Number), MW=VB[2], MH=VB[3];
+let view={x:0,y:0,w:MW,h:MH}, tween=0, moved=false;
+const clampV=v=>{v.w=Math.min(MW,Math.max(MW/14,v.w));v.h=v.w*MH/MW;v.x=Math.min(MW-v.w,Math.max(0,v.x));v.y=Math.min(MH-v.h,Math.max(0,v.y));return v};
+function apply(v){view=v;mapEl.setAttribute("viewBox",v.x.toFixed(1)+" "+v.y.toFixed(1)+" "+v.w.toFixed(1)+" "+v.h.toFixed(1));
+  const z=MW/v.w;wrap.style.touchAction=z>1.02?"none":"pan-y";$("zoomtag").textContent=z<1.05?"Whole city":z.toFixed(1)+"x";labels()}
+function goTo(t,ms){t=clampV(t);cancelAnimationFrame(tween);if(reduce||!ms){apply(t);return}
+  const a={...view},t0=performance.now();(function f(now){const k=Math.min(1,(now-t0)/ms),e=1-Math.pow(1-k,3);
+    apply({x:a.x+(t.x-a.x)*e,y:a.y+(t.y-a.y)*e,w:a.w+(t.w-a.w)*e,h:a.h+(t.h-a.h)*e});if(k<1)tween=requestAnimationFrame(f)})(t0)}
+function pt(cx,cy){const r=mapEl.getBoundingClientRect();return[view.x+(cx-r.left)/r.width*view.w,view.y+(cy-r.top)/r.height*view.h]}
+function zoomBy(f,cx,cy){const r=mapEl.getBoundingClientRect(),[px,py]=cx==null?[view.x+view.w/2,view.y+view.h/2]:pt(cx,cy),w=view.w/f,h=w*MH/MW;
+  const fx=cx==null?.5:(cx-r.left)/r.width,fy=cy==null?.5:(cy-r.top)/r.height;goTo({x:px-fx*w,y:py-fy*h,w,h},220)}
+function zoomTo(c){const p=document.querySelector('#map path[data-c="'+c+'"]');if(!p)return;const b=p.getBBox();
+  const w=Math.max(b.width*2.4,b.height*2.4*MW/MH,MW/9),h=w*MH/MW;goTo({x:b.x+b.width/2-w/2,y:b.y+b.height/2-h/2,w,h},520)}
+$("z-in").onclick=()=>zoomBy(1.6);$("z-out").onclick=()=>zoomBy(1/1.6);$("z-reset").onclick=()=>goTo({x:0,y:0,w:MW,h:MH},420);
+wrap.addEventListener("wheel",ev=>{if(!(ev.ctrlKey||ev.metaKey))return;ev.preventDefault();zoomBy(Math.exp(-ev.deltaY*.01),ev.clientX,ev.clientY)},{passive:false});
+const ptrs=new Map();let last=0,startPt=null;
+wrap.addEventListener("pointerdown",ev=>{if(ev.target.closest(".zoomctl"))return;ptrs.set(ev.pointerId,[ev.clientX,ev.clientY]);moved=false;startPt=[ev.clientX,ev.clientY];last=ptrs.size===2?Math.hypot(...[...ptrs.values()].reduce((a,b)=>[a[0]-b[0],a[1]-b[1]])):0});
+addEventListener("pointermove",ev=>{if(!ptrs.has(ev.pointerId))return;const o=ptrs.get(ev.pointerId),dx=ev.clientX-o[0],dy=ev.clientY-o[1];ptrs.set(ev.pointerId,[ev.clientX,ev.clientY]);
+  if(startPt&&Math.hypot(ev.clientX-startPt[0],ev.clientY-startPt[1])>5){moved=true;wrap.classList.add("drag")}
+  if(!moved)return;cancelAnimationFrame(tween);
+  if(ptrs.size===2){const [a,b]=[...ptrs.values()],d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(last)zoomBy(d/last,(a[0]+b[0])/2,(a[1]+b[1])/2);last=d;return}
+  const r=mapEl.getBoundingClientRect();apply(clampV({x:view.x-dx/r.width*view.w,y:view.y-dy/r.height*view.h,w:view.w,h:view.h}))});
+["pointerup","pointercancel"].forEach(n=>addEventListener(n,ev=>{ptrs.delete(ev.pointerId);wrap.classList.remove("drag");last=0;setTimeout(()=>moved=false,0)}));
+// neighbourhood names appear once there is room for them
+const NS="http://www.w3.org/2000/svg", lab=$("labels"), LB=[];
+document.querySelectorAll("#map path").forEach(p=>{const b=p.getBBox(),t=document.createElementNS(NS,"text");t.textContent=byC[p.dataset.c].n;t.setAttribute("x",b.x+b.width/2);t.setAttribute("y",b.y+b.height/2);t.style.display="none";lab.appendChild(t);LB.push([t,b,byC[p.dataset.c].n.length])});
+function labels(){const r=mapEl.getBoundingClientRect(),k=r.width/view.w,z=MW/view.w,fs=11/k;
+  LB.forEach(([t,b,n])=>{const on=z>=2&&b.width*k>n*5.4&&b.x+b.width>view.x&&b.x<view.x+view.w&&b.y+b.height>view.y&&b.y<view.y+view.h;t.style.display=on?"":"none";if(on){t.style.fontSize=fs+"px";t.style.strokeWidth=(3/k)+"px"}})}
+addEventListener("resize",labels);
+// details: rank, city average and where it sits among all neighbourhoods
+const cityD=D.reduce((s,d)=>s+d.a,0)/D.reduce((s,d)=>s+d.p,0)*1000, cityX=D.reduce((s,d)=>s+d.x,0)/D.reduce((s,d)=>s+d.l,0);
+const byD=[...D].sort((a,b)=>b.d-a.d), byR=D.filter(d=>!d.low&&d.r!=null).sort((a,b)=>b.r-a.r);
+function strip(d){const W=300,isD=mode==="d",val=isD?d.d:d.r;if(val==null||(!isD&&d.low))return"";
+  const sc=isD?v=>Math.sqrt(v/maxD):v=>(v-minR)/(maxR-minR||1),X=v=>8+sc(v)*(W-16),vals=isD?D.map(x=>x.d):rates,city=isD?cityD:cityX;
+  return '<small>'+(isD?"Where it sits among all 158 neighbourhoods":"Where it sits among neighbourhoods with 50+ licences")+'</small><svg viewBox="0 0 300 40" role="img" aria-label="Position of this neighbourhood on the scale"><line class="base" x1="8" x2="292" y1="22" y2="22"/>'
+   +vals.map(v=>'<line class="tk" x1="'+X(v).toFixed(1)+'" x2="'+X(v).toFixed(1)+'" y1="16" y2="28"/>').join("")
+   +'<line class="city" x1="'+X(city).toFixed(1)+'" x2="'+X(city).toFixed(1)+'" y1="9" y2="35"/><text x="'+X(city).toFixed(1)+'" y="8" text-anchor="middle">Toronto</text>'
+   +'<circle class="me" cx="'+X(val).toFixed(1)+'" cy="22" r="6"/></svg>'}
 function show(d){
+  const rd=byD.indexOf(d)+1, rr=byR.indexOf(d)+1, okR=!d.low&&d.r!=null;
   $("p-name").textContent=d.n; $("p-hint").textContent="Neighbourhood "+d.c;
-  $("p-kv").innerHTML=[["Residents (2021)",fmt(d.p)],["Active licences",fmt(d.a)],["Per 1,000 residents",d.d.toFixed(1)],["Live on 1 Jan 2023",fmt(d.l)],["Ended 2023 to 2025",fmt(d.x)],
-   ["Share ended",d.low||d.r==null?"too few to compare":pct(d.r)]].map(r=>"<dt>"+r[0]+"</dt><dd>"+r[1]+"</dd>").join("");
+  $("p-kv").innerHTML=[["Residents (2021)",fmt(d.p)],["Active licences",fmt(d.a)],["Per 1,000 residents",d.d.toFixed(1)],["City average, per 1,000",cityD.toFixed(1)],["Rank for density","#"+rd+" of "+D.length],
+   ["Live on 1 Jan 2023",fmt(d.l)],["Ended 2023 to 2025",fmt(d.x)],["Share ended",okR?pct(d.r):"too few to compare"],["City average, share ended",pct(cityX)],
+   ["Rank for share ended",okR?"#"+rr+" of "+byR.length+" (1 = most ended)":"not ranked"]].map(r=>"<dt>"+r[0]+"</dt><dd>"+r[1]+"</dd>").join("");
+  $("p-strip").innerHTML=strip(d);
 }
 function select(c){ sel=c; document.querySelectorAll("#map path").forEach(p=>p.classList.toggle("sel",p.dataset.c===c));
   $("map").classList.toggle("dim",!!c); if(c)show(byC[c]); }
@@ -242,13 +298,14 @@ document.querySelectorAll("#map path").forEach(p=>{
   p.addEventListener("pointermove",ev=>{const d=byC[p.dataset.c];tip.textContent=d.n+" · "+(mode==="d"?d.d.toFixed(1)+" per 1,000":(d.low||d.r==null?"too few to compare":pct(d.r)+" ended"));
     tip.style.left=Math.min(ev.clientX+14,innerWidth-tip.offsetWidth-8)+"px";tip.style.top=(ev.clientY-34)+"px";tip.classList.add("on");if(!sel)show(d);});
   p.addEventListener("pointerleave",()=>{tip.classList.remove("on");if(!sel)resetPanel();});
-  p.addEventListener("click",()=>select(sel===p.dataset.c?null:p.dataset.c));
+  p.addEventListener("click",()=>{if(moved)return;select(sel===p.dataset.c?null:p.dataset.c)});
+  p.addEventListener("dblclick",()=>{select(p.dataset.c);zoomTo(p.dataset.c)});
 });
-function resetPanel(){ $("p-name").textContent="Pick a neighbourhood"; $("p-hint").textContent="Hover over the map or search above."; $("p-kv").innerHTML=""; }
+function resetPanel(){ $("p-name").textContent="Pick a neighbourhood"; $("p-hint").textContent="Hover over the map or search above."; $("p-kv").innerHTML=""; $("p-strip").innerHTML=""; }
 $("m-d").onclick=()=>{mode="d";$("m-d").setAttribute("aria-pressed",true);$("m-e").setAttribute("aria-pressed",false);paint()};
 $("m-e").onclick=()=>{mode="e";$("m-e").setAttribute("aria-pressed",true);$("m-d").setAttribute("aria-pressed",false);paint()};
 $("names").innerHTML=D.map(d=>'<option value="'+d.n.replace(/"/g,"&quot;")+'">').join("");
-$("find").addEventListener("change",ev=>{const d=D.find(x=>x.n.toLowerCase()===ev.target.value.trim().toLowerCase());if(d){select(d.c);document.querySelector('#map path[data-c="'+d.c+'"]').scrollIntoView({block:"nearest",behavior:reduce?"auto":"smooth"})}});
+$("find").addEventListener("change",ev=>{const d=D.find(x=>x.n.toLowerCase()===ev.target.value.trim().toLowerCase());if(d){select(d.c);zoomTo(d.c);wrap.scrollIntoView({block:"nearest",behavior:reduce?"auto":"smooth"})}});
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change",paint);
 
 function bars(id,rows,fmtv,hi,max){ const el=$(id); rows.forEach(r=>{const b=document.createElement("div");b.className="bar"+(hi?" hi":"");
