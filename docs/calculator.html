@@ -9,7 +9,7 @@
 @media(prefers-color-scheme:dark){:root{--ink:#E8EEF6;--muted:#A7B4C6;--grid:#2A3750;--bg:#0A111F;--card:#111B2E;--note:#2A2412;--gold:#BF8420;--link:#9CC3F0;--bad:#F97066;--good:#4ADE80;--stage1:#16233A;--stage2:#0A111F;--pill:rgba(28,42,66,.88)}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 var(--sans);font-variant-numeric:tabular-nums}
-.wrap{max-width:780px;margin:0 auto;padding:0 20px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
 header{background:#0E2745;color:#fff;border-bottom:4px solid #E3B965;padding:30px 0 26px}
 .eyebrow{font-size:.875rem;letter-spacing:.06em;text-transform:uppercase;color:#E3B965;font-weight:600;margin:0 0 8px}
 h1{font:650 clamp(1.6rem,5vw,2.3rem)/1.15 var(--sans);letter-spacing:-.02em;margin:0 0 10px}
@@ -28,42 +28,55 @@ th:first-child,td:first-child{text-align:left}th{color:var(--muted);font-weight:
 .note{background:var(--note);border-left:4px solid var(--gold);padding:10px 16px;font-size:.9375rem;border-radius:0 6px 6px 0}
 button{min-height:44px;padding:0 16px;font:inherit;font-weight:600;border-radius:8px;border:1px solid var(--link);background:transparent;color:var(--link);cursor:pointer}
 footer{color:var(--muted);font-size:.875rem;padding:24px 0 40px}
-@media(max-width:620px){.inputs,.big{grid-template-columns:1fr}}
-#card3d{padding:0;overflow:hidden}
-.stage3d{position:relative;height:480px;background:linear-gradient(180deg,var(--stage1),var(--stage2));touch-action:pan-y;cursor:grab}
+@media(max-width:620px){.big{grid-template-columns:1fr}}
+#card3d{padding:0;overflow:hidden;margin:0}
+.split{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px;align-items:start;margin:20px 0}
+#card3d{position:sticky;top:64px}
+.panel3d{margin:0}
+.stage3d{position:relative;height:580px;background:linear-gradient(180deg,var(--stage1),var(--stage2));touch-action:pan-y;cursor:grab}
 .stage3d:active{cursor:grabbing}.stage3d canvas{display:block;width:100%;height:100%}
 .lab3d{position:absolute;transform:translate(0,-50%);display:none;align-items:center;gap:7px;padding:4px 10px 4px 8px;border-radius:999px;background:var(--pill);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 2px 10px rgba(0,0,0,.14);font-size:12.5px;font-weight:500;color:var(--ink);white-space:nowrap;pointer-events:none}
 .lab3d i{width:9px;height:9px;border-radius:50%;flex:none}.lab3d b{font-weight:700}
 .badge3d{position:absolute;top:14px;right:14px;padding:6px 13px;border-radius:999px;background:var(--bad);color:#fff;font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(180,35,24,.35)}
-.leg3d{position:absolute;top:14px;left:16px;font-size:12.5px;line-height:1.6;color:var(--muted);pointer-events:none}
+.leg3d{position:absolute;bottom:12px;left:16px;right:90px;font-size:12px;line-height:1.55;color:var(--muted);pointer-events:none}
 .tip3d{position:absolute;transform:translate(12px,-120%);padding:8px 12px;border-radius:12px;background:rgba(20,22,28,.92);color:#fff;font-size:12.5px;line-height:1.45;pointer-events:none;white-space:nowrap;z-index:3}
 .rep3d{position:absolute;bottom:12px;right:14px;min-height:34px;padding:0 14px;font-size:.8125rem}
-.hint3d{margin:0;padding:10px 16px;font-size:.875rem;color:var(--muted);border-top:1px solid var(--grid)}
-@media(max-width:620px){.stage3d{height:400px}}
+.big .wide{grid-column:1/-1}.big{grid-template-columns:repeat(2,minmax(0,1fr))}
+.revl{margin-top:14px;font-weight:600;color:var(--ink)}
+.line{margin-top:14px}.lh{display:flex;align-items:center;gap:8px;font-size:.9375rem}
+.ln{flex:1;min-width:0;font-weight:600}.lp{color:var(--muted);font-size:.875rem}
+.ld{display:flex;align-items:center;gap:2px;color:var(--muted)}.ld input{width:104px;min-height:34px;margin:0;padding:0 8px;text-align:right;font-size:.9375rem}
+.sl{-webkit-appearance:none;appearance:none;width:100%;min-height:0;height:4px;margin:12px 0 2px;padding:0;border:0;border-radius:2px;background:var(--grid);outline:none}
+.sl::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.35),0 0 0 .5px rgba(0,0,0,.1);cursor:pointer}
+.sl::-moz-range-thumb{width:22px;height:22px;border:0;border-radius:50%;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.35);cursor:pointer}
+button.i{min-height:0;width:17px;height:17px;padding:0;margin-left:6px;border:0;border-radius:50%;background:var(--grid);color:var(--muted);font:600 11px/17px var(--sans);vertical-align:1px}
+.info{margin:8px 0 0;padding:10px 12px;border-radius:10px;background:var(--bg);font-size:.84rem;color:var(--muted);line-height:1.45}
+.acts{margin-top:18px}
+@media(max-width:860px){.split{grid-template-columns:minmax(0,1fr)}#card3d{position:relative;top:0}.stage3d{height:430px}}
 </style><link rel="stylesheet" href="motion.css"></head><body>
 <header><div class="wrap"><p class="eyebrow">Student project by Ben Shadabi · Business Analytics (BBA), George Brown College</p>
 <h1>Compare your restaurant to the benchmark</h1>
 <p>Enter one year of your numbers. The page works out your margin, compares every cost line with the average Canadian restaurant, and shows what a 1% cut is worth to you. It runs in your browser and sends nothing anywhere.</p></div></header>
 <main class="wrap">
-<div class="card"><div class="inputs">
-<label>Revenue ($ per year)<input id="rev" type="number" inputmode="decimal" min="0" step="1000"></label>
-<label>Cost of sales: food, drink, packaging ($)<input id="cos" type="number" inputmode="decimal" min="0" step="1000"></label>
-<label>Labour and commissions ($)<input id="lab" type="number" inputmode="decimal" min="0" step="1000"></label>
-<label>Rent ($)<input id="rent" type="number" inputmode="decimal" min="0" step="1000"></label>
-<label>Utilities and telecom ($)<input id="util" type="number" inputmode="decimal" min="0" step="500"></label>
-<label>Amortization ($)<input id="amort" type="number" inputmode="decimal" min="0" step="500"></label>
-<label>All other expenses ($): insurance, marketing, fees, repairs, etc.<input id="other" type="number" inputmode="decimal" min="0" step="1000"></label>
-<div style="display:flex;align-items:end"><button id="reset" type="button">Reset to the benchmark average</button></div>
-</div></div>
-
-<div class="card" id="card3d"><div class="stage3d" id="stage3d"><div class="leg3d">Left: average restaurant<br>Right: yours<br>Gold plate = 100% of revenue<br>Red = costs above revenue</div><div id="badge3d" class="badge3d" hidden></div><div id="tip3d" class="tip3d" hidden></div><button id="replay3d" class="rep3d" type="button">Replay</button></div>
-<p class="hint3d">Your restaurant as a stack of costs. It follows the numbers above. Drag to turn it, hover a block for its dollars.</p></div>
-
-<div class="card"><div class="big" aria-live="polite">
+<div class="split">
+<div class="card" id="card3d"><div class="stage3d" id="stage3d"><div id="badge3d" class="badge3d" hidden></div><div id="tip3d" class="tip3d" hidden></div><div class="leg3d">Left: average restaurant · Right: yours<br>Gold plate = 100% of revenue · red = costs above revenue<br>Drag to turn it, hover a block for its dollars.</div><button id="replay3d" class="rep3d" type="button">Replay</button></div></div>
+<div class="card panel3d">
+<div class="big" aria-live="polite">
 <div><b id="o-profit">-</b><span>your net profit</span></div>
-<div><b id="o-margin">-</b><span>your net margin (benchmark 2.5%)</span></div>
-<div><b id="o-be">-</b><span>break-even revenue</span></div></div>
-<p id="o-verdict" aria-live="polite"></p></div>
+<div><b id="o-margin">-</b><span>your net margin (benchmark 2.5%) <button type="button" class="i" data-k="margin" aria-label="What is net margin?" aria-expanded="false">i</button></span></div>
+<div class="wide"><b id="o-be">-</b><span>break-even revenue</span></div></div>
+<div class="info" id="info-margin" hidden>Profit as a share of revenue: what is left of each dollar sold after every cost. The average Canadian restaurant keeps 2.5 cents.</div>
+<p id="o-verdict" aria-live="polite"></p>
+<label class="revl">Revenue ($ per year)<input id="rev" type="number" inputmode="decimal" min="0" step="1000"></label>
+<div class="line"><div class="lh"><span class="ln">Cost of sales<button type="button" class="i" data-k="cos" aria-label="What is Cost of sales?" aria-expanded="false">i</button></span><span class="lp" id="p-cos"></span><span class="ld">$<input id="cos" type="number" inputmode="decimal" min="0" step="1000" aria-label="Cost of sales in dollars per year"></span></div><input class="sl" id="s-cos" type="range" min="0" max="0.6" step="0.001" aria-label="Cost of sales as a share of revenue"><div class="info" id="info-cos" hidden>Food, drink and packaging. It is usually the biggest line.</div></div>
+<div class="line"><div class="lh"><span class="ln">Labour and commissions</span><span class="lp" id="p-lab"></span><span class="ld">$<input id="lab" type="number" inputmode="decimal" min="0" step="1000" aria-label="Labour and commissions in dollars per year"></span></div><input class="sl" id="s-lab" type="range" min="0" max="0.6" step="0.001" aria-label="Labour and commissions as a share of revenue"></div>
+<div class="line"><div class="lh"><span class="ln">Rent</span><span class="lp" id="p-rent"></span><span class="ld">$<input id="rent" type="number" inputmode="decimal" min="0" step="1000" aria-label="Rent in dollars per year"></span></div><input class="sl" id="s-rent" type="range" min="0" max="0.6" step="0.001" aria-label="Rent as a share of revenue"></div>
+<div class="line"><div class="lh"><span class="ln">Utilities and telecom</span><span class="lp" id="p-util"></span><span class="ld">$<input id="util" type="number" inputmode="decimal" min="0" step="500" aria-label="Utilities and telecom in dollars per year"></span></div><input class="sl" id="s-util" type="range" min="0" max="0.6" step="0.001" aria-label="Utilities and telecom as a share of revenue"></div>
+<div class="line"><div class="lh"><span class="ln">Amortization<button type="button" class="i" data-k="amort" aria-label="What is Amortization?" aria-expanded="false">i</button></span><span class="lp" id="p-amort"></span><span class="ld">$<input id="amort" type="number" inputmode="decimal" min="0" step="500" aria-label="Amortization in dollars per year"></span></div><input class="sl" id="s-amort" type="range" min="0" max="0.6" step="0.001" aria-label="Amortization as a share of revenue"><div class="info" id="info-amort" hidden>Equipment and renovations spread over the years they last. It is an accounting cost, so no cash leaves in that year.</div></div>
+<div class="line"><div class="lh"><span class="ln">All other expenses<button type="button" class="i" data-k="other" aria-label="What is All other expenses?" aria-expanded="false">i</button></span><span class="lp" id="p-other"></span><span class="ld">$<input id="other" type="number" inputmode="decimal" min="0" step="1000" aria-label="All other expenses in dollars per year"></span></div><input class="sl" id="s-other" type="range" min="0" max="0.6" step="0.001" aria-label="All other expenses as a share of revenue"><div class="info" id="info-other" hidden>Insurance, marketing, card and delivery fees, repairs and so on. In the benchmark this line is calculated (revenue minus every listed cost and profit), not a published figure.</div></div>
+<div class="acts"><button id="reset" type="button">Reset to the benchmark average</button></div>
+</div>
+</div>
 
 <h2>Line by line</h2>
 <div class="card"><table><thead><tr><th>Line</th><th>You</th><th>Benchmark</th><th>Gap ($/yr)</th><th>Worth of a 1% cut</th></tr></thead><tbody id="rows"></tbody></table></div>
@@ -101,12 +114,19 @@ function render() {
     : profit / rev < BENCH.profit / BENCH.rev ? "You made a profit, but your margin is below the 2.5% benchmark average."
     : "Your margin is at or above the 2.5% benchmark average.";
   window.calc3d = {rev, vals: costs};
+  LINES.forEach(([k], i) => {
+    const sl = $("s-" + k), share = rev ? costs[i] / rev : 0;
+    $("p-" + k).textContent = rev ? pct(share) : "-";
+    if (document.activeElement !== sl) sl.value = Math.min(share, 0.6);
+  });
   $("rows").innerHTML = LINES.map(([k, name], i) => {
     const share = rev ? costs[i] / rev : 0, b = BENCH[k] / BENCH.rev, gap = costs[i] - b * rev;
     const cls = rev ? (gap > 0 ? "bad" : "good") : "";
     return `<tr><td>${name}</td><td>${rev ? pct(share) : "-"}</td><td>${pct(b)}</td><td class="${cls}">${rev ? money(gap) : "-"}</td><td>${money(costs[i] * 0.01)}</td></tr>`;
   }).join("");
 }
+LINES.forEach(([k]) => $("s-" + k).addEventListener("input", e => { $(k).value = Math.round(parseFloat(e.target.value) * num("rev")); }));
+document.querySelectorAll("button.i").forEach(b => b.addEventListener("click", () => { const d = $("info-" + b.dataset.k); d.hidden = !d.hidden; b.setAttribute("aria-expanded", String(!d.hidden)); }));
 document.querySelectorAll("input").forEach(i => i.addEventListener("input", render));
 $("reset").addEventListener("click", () => { fill(); render(); });
 fill(); render();
